@@ -333,7 +333,7 @@ define(function(require, exports, module) {
         
         var evaluator = {
             name        : "Test",
-            mode        : "ace/mode/text",
+            mode        : "ace/mode/javascript",
             message     : "",
             canEvaluate : function(str) { return true; },
             evaluate    :  function(expression, cell, cb) {

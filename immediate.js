@@ -127,7 +127,7 @@ define(function(require, exports, module) {
                         currentDocument.getSession().changeType(ddType.value);
                 });
                 btnClear.on("click", function(){
-                    plugin.clear()
+                    plugin.clear();
                 });
                 
                 for (var type in replTypes){
@@ -138,7 +138,7 @@ define(function(require, exports, module) {
                 handle.on("addType", function(e){
                     addType(e.name, e.value, e.plugin);
                 });
-            })
+            });
             
             /***** Method *****/
             
@@ -212,7 +212,8 @@ define(function(require, exports, module) {
                 var session = e.doc.getSession();
                 if (session.repl)
                     session.repl.detach();
-                delete session.repl;
+                // TODO: this breaks moving repl between splits
+                // delete session.repl;
             });
             plugin.on("state.get", function(e){
                 // @todo at one for each value container
