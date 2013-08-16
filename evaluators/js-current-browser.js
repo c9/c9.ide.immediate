@@ -63,7 +63,7 @@ define(function(require, exports, module) {
             this.cell = cell;
             
             this.html = document.createElement("div");
-            this.cell.addWidget({ el: this.html, coverLine: true });
+            this.cell.addWidget({ el: this.html, coverLine: true, fixedWidth: true });
         }
         Console.prototype = {
             write : function () {

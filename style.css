@@ -23,7 +23,6 @@
 .immediate .ace_lineWidgetContainer{
     border : 0;
     background : transparent;
-    width : 100%;
 }
 .immediate .property{
     color : #BEDB18;
@@ -69,18 +68,18 @@
     display : none;
 }
 .immediate .string{
-    display : inline-block;
+    display : inline;
     color : rgb(255, 112, 0);
 }
 .immediate .number{
-    display : inline-block;
+    display : inline;
     color : rgb(0, 163, 255);
 }
 .immediate .function{
-    display : inline-block;
+    display : inline;
 }
 .immediate .regexp{
-    display : inline-block;
+    display : inline;
     color : rgb(255, 112, 0);
 }
 .immediate .err{
