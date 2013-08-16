@@ -78,6 +78,7 @@ define(function(require, exports, module) {
                 
                 html.updateWidget = this.$update.bind(this);
                 html.updateWidget();
+                this.$scrollIntoView();  
             },
             log : function(output){ 
                 var args = Array.prototype.slice.apply(arguments);
@@ -96,6 +97,8 @@ define(function(require, exports, module) {
             },
             $update : function() {
                 this.cell.session.repl.onWidgetChanged(this.cell);
+            },
+            $scrollIntoView : function() {
                 var renderer = this.cell.session.repl.editor.renderer;
                 // TODO add a better way to scroll ace cursor into view when rendered
                 setTimeout(function() {
