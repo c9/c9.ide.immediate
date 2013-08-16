@@ -95,7 +95,12 @@ define(function(require, exports, module) {
                 return this.write.apply(this, args); 
             },
             $update : function() {
-                this.cell.session.repl.onWidgetChanged(this.cell);                
+                this.cell.session.repl.onWidgetChanged(this.cell);
+                var renderer = this.cell.session.repl.editor.renderer;
+                // TODO add a better way to scroll ace cursor into view when rendered
+                setTimeout(function() {
+                    renderer.scrollCursorIntoView();
+                });
             }
         };
         
@@ -120,7 +125,7 @@ define(function(require, exports, module) {
         function insertTree(div, caption, object, drawChildren){
             // caption can be a string or an html element
             var treeitem = div.appendChild(document.createElement("span"));
-            var arrow    = treeitem.appendChild(document.createElement("span"))
+            var arrow    = treeitem.appendChild(document.createElement("span"));
             treeitem.className = "treeitem";
             arrow.className    = "arrow";
             treeitem.appendChild(caption);
