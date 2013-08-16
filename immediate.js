@@ -36,9 +36,11 @@ define(function(require, exports, module) {
                     new ui.item({
                         caption : "New Immediate Window",
                         onclick : function(e){
-                            if (tabs.focussedPage)
-                                e.tab = tabs.focussedPage.tab;
-                            tabs.openEditor("immediate", true, function(){});
+                            tabs.open({
+                                active     : true,
+                                tab        : this.parentNode.tab,
+                                editorType : "immediate"
+                            }, function(){});
                         }
                     })
                 )
@@ -117,7 +119,12 @@ define(function(require, exports, module) {
                 
                 ace = plugin.ace;
                 
+                ace.setOption("printMargin", false);
+                ace.setOption("scrollPastEnd", 0);
                 ace.setOption("fontSize", 11);
+                ace.setOption("showFoldWidgets", false);
+                ace.setOption("highlightActiveLine", false);
+                ace.setOption("highlightGutterLine", false);
                 ace.container.style.lineHeight = "17px";
                 
                 e.htmlNode.className += " immediate";

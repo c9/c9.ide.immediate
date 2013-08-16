@@ -335,7 +335,7 @@ define(function(require, exports, module) {
             name        : "Test",
             mode        : "ace/mode/javascript",
             message     : "",
-            canEvaluate : function(str) { return true; },
+            canEvaluate : function(str) { return str.trim() ? true : false; },
             evaluate    :  function(expression, cell, cb) {
                 // Ignore heroku command if typed
                 // str = str.replace(/^heroku\s+/, "");
@@ -382,6 +382,8 @@ define(function(require, exports, module) {
                  
                 cell.setWaiting(false);
                 //cb("Done");
+                
+                delete win.result;
             }
         };
         

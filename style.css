@@ -23,6 +23,7 @@
 .immediate .ace_lineWidgetContainer{
     border : 0;
     background : transparent;
+    width : 100%;
 }
 .immediate .property{
     color : #BEDB18;
@@ -99,4 +100,25 @@
 }
 .immediate .preview{
     font-style : italic;
+}
+
+/*.immediate .ace_gutter{*/
+/*    background : black !important;*/
+/*}*/
+.immediate .ace_gutter-cell{
+    padding-left : 6px;
+    color : transparent;
+}
+
+.immediate .ace_gutter-cell.repl_prompt:after{
+    padding-right : 0;
+    padding-left : 3px;
+    content: ">";
+    color : rgb(113, 155, 40);
+}
+.immediate .ace_gutter-cell.repl_output:after{
+    content: "";
+}
+.immediate .ace_gutter-cell.repl_dots:after{
+    content: "";
 }
