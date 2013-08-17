@@ -331,7 +331,7 @@ define(function(require, exports, module) {
 
                             insert(preview, (i !== 0 ? ", " : ""));
                             insert(preview, "", props[i]);
-                            renderType(object[props[i]], preview, true, 2);
+                            renderType(object[props[i]], preview, true, true);
                             count++;
                         }
                         if (props.length > count)
