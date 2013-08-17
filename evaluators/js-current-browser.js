@@ -114,7 +114,7 @@ define(function(require, exports, module) {
             markup = markup.replace(/([a-z]\w{1,4}:\/\/[\w:_\-\?&\/\.\#]*)/gi, "<a>$1</a>");
             div.insertAdjacentHTML("beforeend", markup);
             
-            if (div.lastChild.nodeType == 1) {
+            if (div.lastChild && div.lastChild.nodeType == 1) {
                 var nodes = div.lastChild.querySelectorAll("a");
                 for (var i = 0; i < nodes.length; i++) {
                     nodes[i].addEventListener("click", function(e){
@@ -184,7 +184,7 @@ define(function(require, exports, module) {
             
             var keys = Object.getOwnPropertyNames(object);
             keys.forEach(function(name){
-                renderType(object[name], html, 2, false, name);
+                renderType(object[name], html, 2, 2, name);
                 insert(html, "<br />");
             });
         }
@@ -218,7 +218,7 @@ define(function(require, exports, module) {
             }
             else if (type == "function") {
                 insert(html, "<span class='function'>" 
-                    + (short ? "function" : object.toString()) + "</span>", name);
+                    + object.toString() + "</span>", name);
             }
             else if (type == "boolean") {
                 insert(html, "<span class='boolean'>" + object + "</span>", name);
@@ -310,7 +310,7 @@ define(function(require, exports, module) {
                 else {
                     type = (object.constructor.toString().match(/^function\s+(\w+)/) 
                         || [0,"(anonymous function)"])[1]
-                    if (short) 
+                    if (short === true) 
                         return insert(html, type, name);
                 
                     caption = document.createElement("span");
@@ -318,21 +318,30 @@ define(function(require, exports, module) {
                     var preview = caption.appendChild(document.createElement("span"));
                     preview.className = "preview";
                     
-                    insert(preview, " {");
-                    
-                    // @TODO https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptor
-                    
-                    var props = Object.getOwnPropertyNames(object);
-                    var count = Math.min(props.length, 5);
-                    for (var i = 0; i < count; i++) {
-                        insert(preview, (i !== 0 ? ", " : ""));
-                        insert(preview, "", props[i]);
-                        renderType(object[props[i]], preview, false, 2);
+                    if (short !== 2) {
+                        insert(preview, " {");
+                        
+                        // @TODO https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptor
+                        
+                        var props = Object.getOwnPropertyNames(object);
+                        var count = 0;
+                        for (var i = 0; count < 5 && i < props.length; i++) {
+                            if (typeof object[props[i]] == "function")
+                                continue;
+
+                            insert(preview, (i !== 0 ? ", " : ""));
+                            insert(preview, "", props[i]);
+                            renderType(object[props[i]], preview, true, 2);
+                            count++;
+                        }
+                        if (props.length > count)
+                            insert(preview, "…");
+                            
+                        insert(preview, "}");
                     }
-                    if (props.length > count)
-                        insert(preview, "…");
-                    
-                    insert(preview, "}");
+                    else {
+                        insert(preview, "");
+                    }
                 }
                 
                 insertTree(html, caption, object, parseChildren);

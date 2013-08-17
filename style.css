@@ -7,6 +7,11 @@
     padding : 0 0 0 4px;
     cursor : default;
     line-height : 15px;
+    vertical-align: top;
+}
+.immediate .log>span, .immediate .return>span, 
+.immediate .error>span, .immediate .warn>span{
+    vertical-align: top;
 }
 .immediate .ace_lineWidgetContainer>div:first-child{
     border-top: 1px solid rgb(29, 28, 28);
@@ -49,7 +54,7 @@
     background-position: -10px -1px;
 }
 .immediate .treecontainer{
-    padding : 0 0 0 10px;
+    padding : 0 0 0 0;
 }
 .immediate .treecontainer>.property{
     padding-left: 10px;
