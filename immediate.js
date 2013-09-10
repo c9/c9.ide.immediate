@@ -168,7 +168,7 @@ define(function(require, exports, module) {
             });
             
             var currentDocument;
-            plugin.on("document.load", function(e){
+            plugin.on("documentLoad", function(e){
                 var doc     = e.doc;
                 var session = doc.getSession();
                 
@@ -205,7 +205,7 @@ define(function(require, exports, module) {
                 
                 session.changeType(session.type || ddType.value);
             });
-            plugin.on("document.activate", function(e){
+            plugin.on("documentActivate", function(e){
                 currentDocument = e.doc;
                 var session = e.doc.getSession();
                 
@@ -215,7 +215,7 @@ define(function(require, exports, module) {
                 if (session.repl)
                     session.repl.attach(ace);
             });
-            plugin.on("document.unload", function(e){
+            plugin.on("documentUnload", function(e){
                 var session = e.doc.getSession();
                 if (session.repl)
                     session.repl.detach();
