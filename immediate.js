@@ -222,11 +222,11 @@ define(function(require, exports, module) {
                 // TODO: this breaks moving repl between splits
                 // delete session.repl;
             });
-            plugin.on("state.get", function(e){
+            plugin.on("getState", function(e){
                 // @todo at one for each value container
                 e.state.type      = e.doc.getSession().type;
             });
-            plugin.on("state.set", function(e){
+            plugin.on("setState", function(e){
                 if (e.state.type)
                     ddType.setValue(e.state.type);
             });
