@@ -152,7 +152,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             
             describe("addType(), on.evaluate", function(){
                 it('should add an item to the dropdown and run it', function(done) {
-                    // var inp = tabs.focussedPage.editor.getElement("txtInput");
+                    // var inp = tabs.focussedTab.editor.getElement("txtInput");
                     // inp.setValue("1+1");
                     // inp.dispatchEvent("keydown", {keyCode: 13});
                     done();
