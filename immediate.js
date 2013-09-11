@@ -38,7 +38,7 @@ define(function(require, exports, module) {
                         onclick : function(e){
                             tabs.open({
                                 active     : true,
-                                tab        : this.parentNode.tab,
+                                pane        : this.parentNode.pane,
                                 editorType : "immediate"
                             }, function(){});
                         }
