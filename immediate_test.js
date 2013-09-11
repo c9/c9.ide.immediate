@@ -47,7 +47,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
                 type  : "pane", 
                 nodes : [
                     {
-                        type : "page",
+                        type : "tab",
                         editorType : "immediate",
                         active : "true"
                     }
@@ -67,7 +67,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             testing     : 2
         },
         "plugins/c9.ide.editors/pane",
-        "plugins/c9.ide.editors/page",
+        "plugins/c9.ide.editors/tab",
         "plugins/c9.ide.ace/ace",
         {
             packagePath: "plugins/c9.ide.immediate/immediate",
@@ -116,9 +116,9 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
         var immediate = imports.immediate;
         var tabs      = imports.tabs;
         
-        expect.html.setConstructor(function(page){
-            if (typeof page == "object")
-                return page.pane.aml.getPage("editor::" + page.editorType).$ext;
+        expect.html.setConstructor(function(tab){
+            if (typeof tab == "object")
+                return tab.pane.aml.getPage("editor::" + tab.editorType).$ext;
         });
         
         function countEvents(count, expected, done){

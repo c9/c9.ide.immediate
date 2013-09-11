@@ -112,7 +112,7 @@ define(function(require, exports, module) {
             
             plugin.on("draw", function(e){
                 // Create UI elements
-                ui.insertMarkup(e.page, markup, plugin);
+                ui.insertMarkup(e.tab, markup, plugin);
                 
                 ddType    = plugin.getElement("ddType");
                 btnClear  = plugin.getElement("btnClear");
@@ -158,8 +158,8 @@ define(function(require, exports, module) {
                 plugin.addElement(item);
             }
             
-            // Set the page in loading state - later this could be the output block
-            // currentDocument.page.className.add("loading");
+            // Set the tab in loading state - later this could be the output block
+            // currentDocument.tab.className.add("loading");
             // settings.save();
             
             /***** Lifecycle *****/
