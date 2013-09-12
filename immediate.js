@@ -5,14 +5,14 @@
  * @license GPLv3 <http://www.gnu.org/licenses/gpl.txt>
  */
 define(function(require, exports, module) {
-    main.consumes = ["editors", "ui", "settings", "tabs", "ace"];
+    main.consumes = ["editors", "ui", "settings", "tabManager", "ace"];
     main.provides = ["immediate"];
     return main;
 
     function main(options, imports, register) {
         var editors  = imports.editors;
         // var settings = imports.settings;
-        var tabs     = imports.tabs;
+        var tabs     = imports.tabManager;
         var ui       = imports.ui;
         
         var Repl     = require("plugins/c9.ide.ace.repl/repl").Repl;
