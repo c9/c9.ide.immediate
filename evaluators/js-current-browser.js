@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    main.consumes = ["Plugin", "immediate", "settings"];
+    main.consumes = ["plugin", "immediate", "settings"];
     main.provides = ["evaluator-js-browser"];
     return main;
     
@@ -27,7 +27,7 @@ define(function(require, exports, module) {
     */
 
     function main(options, imports, register) {
-        var Plugin    = imports.Plugin;
+        var Plugin    = imports.plugin;
         // var settings  = imports.settings;
         var immediate = imports.immediate;
         

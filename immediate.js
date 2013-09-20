@@ -5,14 +5,14 @@
  * @license GPLv3 <http://www.gnu.org/licenses/gpl.txt>
  */
 define(function(require, exports, module) {
-    main.consumes = ["editors", "ui", "settings", "tabManager", "ace"];
+    main.consumes = ["editors", "ui", "settings", "tabs", "ace"];
     main.provides = ["immediate"];
     return main;
 
     function main(options, imports, register) {
         var editors  = imports.editors;
         // var settings = imports.settings;
-        var tabs     = imports.tabManager;
+        var tabs     = imports.tabs;
         var ui       = imports.ui;
         
         var Repl     = require("plugins/c9.ide.ace.repl/repl").Repl;
@@ -38,7 +38,7 @@ define(function(require, exports, module) {
                         onclick : function(e){
                             tabs.open({
                                 active     : true,
-                                pane        : this.parentNode.pane,
+                                tab        : this.parentNode.tab,
                                 editorType : "immediate"
                             }, function(){});
                         }
@@ -112,7 +112,7 @@ define(function(require, exports, module) {
             
             plugin.on("draw", function(e){
                 // Create UI elements
-                ui.insertMarkup(e.tab, markup, plugin);
+                ui.insertMarkup(e.page, markup, plugin);
                 
                 ddType    = plugin.getElement("ddType");
                 btnClear  = plugin.getElement("btnClear");
@@ -158,8 +158,8 @@ define(function(require, exports, module) {
                 plugin.addElement(item);
             }
             
-            // Set the tab in loading state - later this could be the output block
-            // currentDocument.tab.className.add("loading");
+            // Set the page in loading state - later this could be the output block
+            // currentDocument.page.className.add("loading");
             // settings.save();
             
             /***** Lifecycle *****/
@@ -168,7 +168,7 @@ define(function(require, exports, module) {
             });
             
             var currentDocument;
-            plugin.on("documentLoad", function(e){
+            plugin.on("document.load", function(e){
                 var doc     = e.doc;
                 var session = doc.getSession();
                 
@@ -205,7 +205,7 @@ define(function(require, exports, module) {
                 
                 session.changeType(session.type || ddType.value);
             });
-            plugin.on("documentActivate", function(e){
+            plugin.on("document.activate", function(e){
                 currentDocument = e.doc;
                 var session = e.doc.getSession();
                 
@@ -215,18 +215,18 @@ define(function(require, exports, module) {
                 if (session.repl)
                     session.repl.attach(ace);
             });
-            plugin.on("documentUnload", function(e){
+            plugin.on("document.unload", function(e){
                 var session = e.doc.getSession();
                 if (session.repl)
                     session.repl.detach();
                 // TODO: this breaks moving repl between splits
                 // delete session.repl;
             });
-            plugin.on("getState", function(e){
+            plugin.on("state.get", function(e){
                 // @todo at one for each value container
                 e.state.type      = e.doc.getSession().type;
             });
-            plugin.on("setState", function(e){
+            plugin.on("state.set", function(e){
                 if (e.state.type)
                     ddType.setValue(e.state.type);
             });
