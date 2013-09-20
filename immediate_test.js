@@ -28,7 +28,6 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             workspaceId : "ubuntu/ip-10-35-77-180",
             startdate   : new Date(),
             debug       : true,
-            smithIo     : "{\"prefix\":\"/smith.io/server\"}",
             hosted      : true,
             local       : false,
             hostname    : "dev.javruben.c9.io",
@@ -36,7 +35,6 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
         },
         
         "plugins/c9.core/ext",
-        "plugins/c9.core/events",
         "plugins/c9.core/http",
         "plugins/c9.core/util",
         "plugins/c9.ide.ui/anims",
@@ -80,9 +78,10 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
         {
             packagePath: "plugins/c9.vfs.client/vfs_client",
             smithIo     : {
-                "prefix": "/smith.io/server"
+                "path": "/smith.io/server"
             }
         },
+        "plugins/c9.vfs.client/endpoint.standalone",
         "plugins/c9.ide.auth/auth",
         "plugins/c9.ide.keys/commands",
         {
@@ -94,7 +93,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
         
         // Mock plugins
         {
-            consumes : ["emitter", "apf", "ui"],
+            consumes : ["apf", "ui"],
             provides : [
                 "menus", "layout", "watcher", 
                 "save", "fs", "preferences", "clipboard"
