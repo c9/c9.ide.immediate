@@ -42,10 +42,10 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
         {
             packagePath : "plugins/c9.core/settings",
             settings : "<settings><state><console>" + JSON.stringify({
-                type  : "tab", 
+                type  : "pane", 
                 nodes : [
                     {
-                        type : "page",
+                        type : "tab",
                         editorType : "immediate",
                         active : "true"
                     }
@@ -61,11 +61,11 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
         "plugins/c9.ide.editors/editors",
         "plugins/c9.ide.editors/editor",
         {
-            packagePath : "plugins/c9.ide.editors/tabs",
+            packagePath : "plugins/c9.ide.editors/tabmanager",
             testing     : 2
         },
+        "plugins/c9.ide.editors/pane",
         "plugins/c9.ide.editors/tab",
-        "plugins/c9.ide.editors/page",
         "plugins/c9.ide.ace/ace",
         {
             packagePath: "plugins/c9.ide.immediate/immediate",
@@ -101,7 +101,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             setup    : expect.html.mocked
         },
         {
-            consumes : ["immediate", "tabs"],
+            consumes : ["immediate", "tabManager"],
             provides : [],
             setup    : main
         }
@@ -113,11 +113,11 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
     
     function main(options, imports, register) {
         var immediate = imports.immediate;
-        var tabs      = imports.tabs;
+        var tabs      = imports.tabManager;
         
-        expect.html.setConstructor(function(page){
-            if (typeof page == "object")
-                return page.tab.aml.getPage("editor::" + page.editorType).$ext;
+        expect.html.setConstructor(function(tab){
+            if (typeof tab == "object")
+                return tab.pane.aml.getPage("editor::" + tab.editorType).$ext;
         });
         
         function countEvents(count, expected, done){
@@ -151,7 +151,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             
             describe("addType(), on.evaluate", function(){
                 it('should add an item to the dropdown and run it', function(done) {
-                    // var inp = tabs.focussedPage.editor.getElement("txtInput");
+                    // var inp = tabs.focussedTab.editor.getElement("txtInput");
                     // inp.setValue("1+1");
                     // inp.dispatchEvent("keydown", {keyCode: 13});
                     done();
