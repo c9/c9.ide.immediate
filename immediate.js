@@ -1,9 +1,3 @@
-/**
- * Immediate Execution Editor for Cloud9 IDE
- *
- * @copyright 2010, Ajax.org B.V.
- * @license GPLv3 <http://www.gnu.org/licenses/gpl.txt>
- */
 define(function(require, exports, module) {
     main.consumes = ["editors", "ui", "settings", "tabManager", "ace"];
     main.provides = ["immediate"];
@@ -51,7 +45,31 @@ define(function(require, exports, module) {
         });
         
         /**
+         * The ace handle, responsible for events that involve all ace
+         * instances. This is the object you get when you request the ace
+         * service in your plugin.
          * 
+         * Example:
+         * 
+         *     define(function(require, exports, module) {
+         *         main.consumes = ["ace"];
+         *         main.provides = ["myplugin"];
+         *         return main;
+         *     
+         *         function main(options, imports, register) {
+         *             var aceHandle = imports.ace;
+         *             
+         *             aceHandle.on("create", function(e){
+         *                 // This is an ace editor instance
+         *                 var ace = e.editor;
+         *             })
+         *         });
+         *     });
+         * 
+         * 
+         * @class immediate
+         * @extends Plugin
+         * @singleton
          */
         handle.freezePublicAPI({
             /**
@@ -244,8 +262,15 @@ define(function(require, exports, module) {
             /***** Register and define API *****/
             
             /**
-             * Read Only Image Editor
-             **/
+             * Immediate Pane for Cloud9 IDE
+             * @extends Editor
+             */
+            /**
+             * The type of editor. Use this to create an immediate pane using
+             * {@link tabManager#openEditor} or {@link editors#createEditor}.
+             * @property {"immediate"} type
+             * @readonly
+             */
             plugin.freezePublicAPI({
                 
             });

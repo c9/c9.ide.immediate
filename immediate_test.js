@@ -71,7 +71,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             packagePath: "plugins/c9.ide.immediate/immediate",
             staticPrefix : "plugins/c9.ide.layout.classic"
         },
-        "plugins/c9.ide.immediate/evaluators/js-current-browser",
+        "plugins/c9.ide.immediate/evaluators/browserjs",
         "plugins/c9.ide.console/console",
         "plugins/c9.fs/proc",
         "plugins/c9.fs/fs",
