@@ -46,7 +46,7 @@ define(function(require, exports, module) {
         
         /**
          * The immediate handle, provides an API for adding 
-         * {@link immediate.evaluator evaluators} to the immediate panels. 
+         * {@link immediate.evaluator evaluators} to the immediate panes. 
          * An evaluator is a plugin that can take the expressions typed in the
          * multi-line REPL like interface and return resuls. The results can be
          * rendered as HTML and are fully interactive.
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
          *                     }
          *                 };
          *     
-         *                 immediate.addType("Go Language", "go", evaluator, plugin);
+         *                 immediate.addEvaluator("Go Language", "go", evaluator, plugin);
          *             });
          *         });
          *     });
@@ -98,24 +98,36 @@ define(function(require, exports, module) {
          * @singleton
          */
         handle.freezePublicAPI({
+            _events : [
+                
+            ],
+            
             /**
-             * 
+             * Adds a new evaluator to all immediate panes. The user is able
+             * to choose the evaluator from a dropdown in the UI of the 
+             * immediate pane.
+             * @param {String}              caption     The caption in the dropdown.
+             * @param {String}              id          The unique identifier of this evaluator.
+             * @param {immediate.evaluator} evaluator   The evaluator for your runtime.
+             * @param {Plugin}              plugin      The plugin responsible for adding the evaluator.
+             * @fires addType
              */
-            addType : function(name, value, evaluator, plugin){
-                if (replTypes[value])
-                    throw new Error("Type is already registered");
+            addEvaluator : function(caption, id, evaluator, plugin){
+                if (replTypes[id])
+                    throw new Error("An evaluator is already registered with "
+                        + "the id '" + id + "'");
                     
-                replTypes[value] = {
-                    name      : name, 
-                    value     : value, 
+                replTypes[id] = {
+                    caption   : caption, 
+                    id        : id, 
                     evaluator : evaluator,
                     plugin    : plugin
                 };
-                emit("addType", replTypes[value]);
+                emit("addType", replTypes[id]);
                 
                 plugin.addOther(function(){ 
-                    emit("removeType", replTypes[value]);
-                    delete replTypes[value]; 
+                    emit("removeType", replTypes[id]);
+                    delete replTypes[id]; 
                 });
             },
             
@@ -125,8 +137,8 @@ define(function(require, exports, module) {
             findEvaluator : function(type, callback){
                 if (!type || !replTypes[type]) {
                     handle.on("addType", function wait(e){
-                        if (!type || e.value == type)
-                            callback(e.value, replTypes[e.value].evaluator);
+                        if (!type || e.id == type)
+                            callback(e.id, replTypes[e.id].evaluator);
                         
                         handle.off("addType", wait);
                     });
@@ -139,9 +151,9 @@ define(function(require, exports, module) {
             /**
              * 
              */
-            removeType : function(value){
-                emit("removeType", replTypes[value]);
-                delete replTypes[value];
+            removeEvaluator : function(id){
+                emit("removeType", replTypes[id]);
+                delete replTypes[id];
             }
         });
         
@@ -183,19 +195,19 @@ define(function(require, exports, module) {
                 
                 for (var type in replTypes){
                     var t = replTypes[type];
-                    addType(t.name, type, t.plugin);
+                    addType(t.caption, type, t.plugin);
                 }
                 
                 handle.on("addType", function(e){
-                    addType(e.name, e.value, e.plugin);
+                    addType(e.caption, e.id, e.plugin);
                 });
             });
             
             /***** Method *****/
             
-            function addType(name, value, plugin){
+            function addType(caption, value, plugin){
                 var item = ddType.appendChild(new ui.item({
-                    caption : name,
+                    caption : caption,
                     value   : value
                 }));
                 
