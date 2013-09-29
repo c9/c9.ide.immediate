@@ -44,135 +44,6 @@ define(function(require, exports, module) {
             ui.insertCss(require("text!./style.css"), options.staticPrefix, handle);
         });
         
-        /**
-         * The immediate handle, provides an API for adding 
-         * {@link immediate.evaluator evaluators} to the immediate panes. 
-         * An evaluator is a plugin that can take the expressions typed in the
-         * multi-line REPL like interface and return resuls. The results can be
-         * rendered as HTML and are fully interactive.
-         * 
-         * This is the object you get when you request the immediate service 
-         * in your plugin.
-         * 
-         * Example:
-         * 
-         *     define(function(require, exports, module) {
-         *         main.consumes = ["immediate", "Plugin"];
-         *         main.provides = ["myplugin"];
-         *         return main;
-         *     
-         *         function main(options, imports, register) {
-         *             var immediate = imports.immediate;
-         *             var plugin    = new imports.Plugin("name", main.consumes);
-         * 
-         *             plugin.on("load", function(){
-         *                 var evaluator = {
-         *                     name        : "Go Language",
-         *                     mode        : "ace/mode/go",
-         *                     message     : "",
-         *                     canEvaluate : function(str) { return str.trim() ? true : false; },
-         *                     evaluate    : function(expression, cell, done) {
-         *     
-         *                         executeCommand(expression, function(result){
-         *                             cell.addWidget({ 
-         *                                 html       : "<div class='result'>" 
-         *                                     + result + "</div>",
-         *                                 coverLine  : true, 
-         *                                 fixedWidth : true 
-         *                             });
-         *                             
-         *                             done();
-         *                         });
-         *                     
-         *                     }
-         *                 };
-         *     
-         *                 immediate.addEvaluator("Go Language", "go", evaluator, plugin);
-         *             });
-         *         });
-         *     });
-         * 
-         * 
-         * @class immediate
-         * @extends Plugin
-         * @singleton
-         */
-        handle.freezePublicAPI({
-            _events : [
-                /**
-                 * @event addEvaluator
-                 * @param {Object}              e
-                 * @param {String}              e.caption     The caption of the evaluator.
-                 * @param {String}              e.id          The unique identifier of the evaluator.
-                 * @param {immediate.evaluator} e.evaluator   The evaluator.
-                 * @param {Plugin}              e.plugin      The plugin responsible for adding the evaluator.
-                 */
-                "addEvaluator",
-                /**
-                 * @event removeEvaluator
-                 * @param {Object}              e
-                 * @param {String}              e.caption     The caption of the evaluator.
-                 * @param {String}              e.id          The unique identifier of the evaluator.
-                 * @param {immediate.evaluator} e.evaluator   The evaluator.
-                 * @param {Plugin}              e.plugin      The plugin responsible for adding the evaluator.
-                 */
-                "removeEvaluator"
-            ],
-            
-            /**
-             * Adds a new evaluator to all immediate panes. The user is able
-             * to choose the evaluator from a dropdown in the UI of the 
-             * immediate pane.
-             * @param {String}              caption     The caption in the dropdown.
-             * @param {String}              id          The unique identifier of this evaluator.
-             * @param {immediate.evaluator} evaluator   The evaluator for your runtime.
-             * @param {Plugin}              plugin      The plugin responsible for adding the evaluator.
-             * @fires addEvaluator
-             */
-            addEvaluator : function(caption, id, evaluator, plugin){
-                if (replTypes[id])
-                    throw new Error("An evaluator is already registered with "
-                        + "the id '" + id + "'");
-                    
-                replTypes[id] = {
-                    caption   : caption, 
-                    id        : id, 
-                    evaluator : evaluator,
-                    plugin    : plugin
-                };
-                emit("addEvaluator", replTypes[id]);
-                
-                plugin.addOther(function(){ 
-                    handle.removeEvaluator(id);
-                });
-            },
-            
-            /**
-             * 
-             */
-            findEvaluator : function(type, callback){
-                if (!type || !replTypes[type]) {
-                    handle.on("addEvaluator", function wait(e){
-                        if (!type || e.id == type)
-                            callback(e.id, replTypes[e.id].evaluator);
-                        
-                        handle.off("addEvaluator", wait);
-                    });
-                }
-                else {
-                    callback(type, replTypes[type].evaluator);
-                }
-            },
-            
-            /**
-             * 
-             */
-            removeEvaluator : function(id){
-                emit("removeEvaluator", replTypes[id]);
-                delete replTypes[id];
-            }
-        });
-        
         function Immediate(){
             var Baseclass = editors.findEditor("ace");
             
@@ -333,6 +204,259 @@ define(function(require, exports, module) {
             
             return plugin;
         }
+        
+        /**
+         * Evaluates expressions from the {@link immediate immediate pane} REPL.
+         * 
+         * This documentation doesn't describe an implementation, instead these
+         * docs provide you a guide on how to write your own evaluator.
+         * 
+         * The following example shows a simple evaluator that evaluates
+         * javascript in an iframe:
+         * 
+         *     var evaluator = {
+         *         mode        : "ace/mode/javascript",
+         *         message     : "",
+         *         canEvaluate : function(str) { return str.trim() ? true : false; },
+         *         evaluate    : function(expression, cell, done) {
+         * 
+         *             var win = iframe.contentWindow;
+         *             win.eval("try{window.result = " + expression 
+         *                 + "}catch(e){window.result = e}");
+         *             
+         *             var result = JSON.serialize(win.result);
+         *             cell.addWidget({ 
+         *                 html       : "<div class='result'>" + result + "</div>",
+         *                 coverLine  : true, 
+         *                 fixedWidth : true 
+         *             });
+         *             cell.setWaiting(false);
+         *         
+         *         }
+         *     };
+         * 
+         * @class immediate.evaluator
+         * @extends Object
+         * @singleton
+         */
+        /**
+         * The language mode that is used to provide syntax highlighting. Any
+         * ace mode is supported (e.g. "ace/mode/javascript", "ace/mode/html", etc).
+         * @property {String} mode
+         */
+        /**
+         * A message displayed at the top of the REPL. Leave this empty to not
+         * show a message.
+         * @property {String} message
+         */
+        /**
+         * Determines whether the expression is valid and can be executed.
+         * @method canEvaluate
+         * @param {String} expression  The expression to inspect.
+         * @return {Boolean}
+         */
+        /**
+         * Evaluates an expression. Both synchronous and asynchronous evaluators
+         * are supported.
+         * 
+         * Example of a sync evaluator:
+         * 
+         *     var evaluator = {
+         *         mode        : "ace/mode/javascript",
+         *         message     : "",
+         *         canEvaluate : function(str) { return str.trim() ? true : false; },
+         *         evaluate    : function(expression, cell, done) {
+         * 
+         *             var win = iframe.contentWindow;
+         *             win.eval("try{window.result = " + expression 
+         *                 + "}catch(e){window.result = e}");
+         *             
+         *             var result = JSON.serialize(win.result);
+         *             cell.addWidget({ 
+         *                 html       : "<div class='result'>" + result + "</div>",
+         *                 coverLine  : true, 
+         *                 fixedWidth : true 
+         *             });
+         *             cell.setWaiting(false);
+         *         
+         *         }
+         *     };
+         * 
+         * Example of an async evaluator:
+         * 
+         *     var evaluator = {
+         *         mode        : "ace/mode/text",
+         *         message     : "",
+         *         canEvaluate : function(str) { return str.trim() ? true : false; },
+         *         evaluate    : function(expression, cell, done) {
+         *         
+         *             executeCommand(expression, function(err, result){
+         *                 if (err)
+         *                     done("Error: " + err);
+         *                 else {
+         *                     cell.addWidget({ 
+         *                         html       : "<div class='result'>" 
+         *                             + result + "</div>",
+         *                         coverLine  : true, 
+         *                         fixedWidth : true 
+         *                     });
+         *                     
+         *                     done();
+         *                 }
+         *             });
+         *         
+         *         }
+         *     };
+         * 
+         * @method evaluate
+         * @param {String}          expression     The expression to evaluate.
+         * @param {immediate.cell}  cell           The cell (each REPL section is a cell) that the expression was typed in.
+         * @param {Function}        done           Call this function when the evaluation is async and the execution is completed.
+         * @param {String}          [done.message] The message to print below the cell in plain text.
+         */
+        /**
+         * A cell in the immediate REPL. Each section where a user can write
+         * an (multi-line) epxression in is called a cell. A cell can have one
+         * or more 'widgets' that display HTML or plain text, which are usually
+         * the result of executing the expression.
+         * @class immediate.Cell
+         */
+        /**
+         * The immediate handle, provides an API for adding 
+         * {@link immediate.evaluator evaluators} to the immediate panes. 
+         * An evaluator is a plugin that can take the expressions from the
+         * multi-line REPL and return resuls. The results can be
+         * rendered as HTML and are fully interactive.
+         * 
+         * This is the object you get when you request the immediate service 
+         * in your plugin.
+         * 
+         * Example:
+         * 
+         *     define(function(require, exports, module) {
+         *         main.consumes = ["immediate", "Plugin"];
+         *         main.provides = ["myplugin"];
+         *         return main;
+         *     
+         *         function main(options, imports, register) {
+         *             var immediate = imports.immediate;
+         *             var plugin    = new imports.Plugin("Your Name", main.consumes);
+         * 
+         *             plugin.on("load", function(){
+         *                 var evaluator = {
+         *                     mode        : "ace/mode/go",
+         *                     message     : "",
+         *                     canEvaluate : function(str) { return str.trim() ? true : false; },
+         *                     evaluate    : function(expression, cell, done) {
+         *     
+         *                         executeCommand(expression, function(result){
+         *                             cell.addWidget({ 
+         *                                 html       : "<div class='result'>" 
+         *                                     + result + "</div>",
+         *                                 coverLine  : true, 
+         *                                 fixedWidth : true 
+         *                             });
+         *                             
+         *                             done();
+         *                         });
+         *                     
+         *                     }
+         *                 };
+         *     
+         *                 immediate.addEvaluator("Go Language", "go", evaluator, plugin);
+         *             });
+         *         });
+         *     });
+         * 
+         * 
+         * @class immediate
+         * @extends Plugin
+         * @singleton
+         */
+        handle.freezePublicAPI({
+            _events : [
+                /**
+                 * Fires when an evaluator is added.
+                 * @event addEvaluator
+                 * @param {Object}              e
+                 * @param {String}              e.caption     The caption of the evaluator.
+                 * @param {String}              e.id          The unique identifier of the evaluator.
+                 * @param {immediate.evaluator} e.evaluator   The evaluator.
+                 * @param {Plugin}              e.plugin      The plugin responsible for adding the evaluator.
+                 */
+                "addEvaluator",
+                /**
+                 * Fires when an evaluator is removed.
+                 * @event removeEvaluator
+                 * @param {Object}              e
+                 * @param {String}              e.caption     The caption of the evaluator.
+                 * @param {String}              e.id          The unique identifier of the evaluator.
+                 * @param {immediate.evaluator} e.evaluator   The evaluator.
+                 * @param {Plugin}              e.plugin      The plugin responsible for adding the evaluator.
+                 */
+                "removeEvaluator"
+            ],
+            
+            /**
+             * Adds a new evaluator to all immediate panes. The user is able
+             * to choose the evaluator from a dropdown in the UI of the 
+             * immediate pane.
+             * @param {String}              caption     The caption in the dropdown.
+             * @param {String}              id          The unique identifier of this evaluator.
+             * @param {immediate.evaluator} evaluator   The evaluator for your runtime.
+             * @param {Plugin}              plugin      The plugin responsible for adding the evaluator.
+             * @fires addEvaluator
+             */
+            addEvaluator : function(caption, id, evaluator, plugin){
+                if (replTypes[id])
+                    throw new Error("An evaluator is already registered with "
+                        + "the id '" + id + "'");
+                    
+                replTypes[id] = {
+                    caption   : caption, 
+                    id        : id, 
+                    evaluator : evaluator,
+                    plugin    : plugin
+                };
+                emit("addEvaluator", replTypes[id]);
+                
+                plugin.addOther(function(){ 
+                    handle.removeEvaluator(id);
+                });
+            },
+            
+            /**
+             * Retrieves an evaluator based on it's id. When the evaluator is
+             * not yet registered, the callback will be returned when the 
+             * evaluator is registered.
+             * @param {String}              id                  The id of the evaluator to retrieve.
+             * @param {Function}            callback            Called when the evaluator is available.
+             * @param {Error}               callback.id         The id of the requested evaluator.
+             * @param {immediate.evaluator} callback.evaluator  The evaluator requested.
+             */
+            findEvaluator : function(id, callback){
+                if (!id || !replTypes[id]) {
+                    handle.on("addEvaluator", function wait(e){
+                        if (!id || e.id == id)
+                            callback(e.id, replTypes[e.id].evaluator);
+                        
+                        handle.off("addEvaluator", wait);
+                    });
+                }
+                else {
+                    callback(id, replTypes[id].evaluator);
+                }
+            },
+            
+            /**
+             * Removes an evaluator from all immediate panes.
+             * @param {String} id  The unique identifier of the evaluator to remove.
+             */
+            removeEvaluator : function(id){
+                emit("removeEvaluator", replTypes[id]);
+                delete replTypes[id];
+            }
+        });
         
         register(null, {
             immediate: handle
