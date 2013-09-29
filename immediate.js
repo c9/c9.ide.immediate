@@ -45,24 +45,50 @@ define(function(require, exports, module) {
         });
         
         /**
-         * The ace handle, responsible for events that involve all ace
-         * instances. This is the object you get when you request the ace
-         * service in your plugin.
+         * The immediate handle, provides an API for adding 
+         * {@link immediate.evaluator evaluators} to the immediate panels. 
+         * An evaluator is a plugin that can take the expressions typed in the
+         * multi-line REPL like interface and return resuls. The results can be
+         * rendered as HTML and are fully interactive.
+         * 
+         * This is the object you get when you request the immediate service 
+         * in your plugin.
          * 
          * Example:
          * 
          *     define(function(require, exports, module) {
-         *         main.consumes = ["ace"];
+         *         main.consumes = ["immediate", "Plugin"];
          *         main.provides = ["myplugin"];
          *         return main;
          *     
          *         function main(options, imports, register) {
-         *             var aceHandle = imports.ace;
-         *             
-         *             aceHandle.on("create", function(e){
-         *                 // This is an ace editor instance
-         *                 var ace = e.editor;
-         *             })
+         *             var immediate = imports.immediate;
+         *             var plugin    = new imports.Plugin("name", main.consumes);
+         * 
+         *             plugin.on("load", function(){
+         *                 var evaluator = {
+         *                     name        : "Go Language",
+         *                     mode        : "ace/mode/go",
+         *                     message     : "",
+         *                     canEvaluate : function(str) { return str.trim() ? true : false; },
+         *                     evaluate    : function(expression, cell, done) {
+         *     
+         *                         executeCommand(expression, function(result){
+         *                             cell.addWidget({ 
+         *                                 html       : "<div class='result'>" 
+         *                                     + result + "</div>",
+         *                                 coverLine  : true, 
+         *                                 fixedWidth : true 
+         *                             });
+         *                             
+         *                             done();
+         *                         });
+         *                     
+         *                     }
+         *                 };
+         *     
+         *                 immediate.addType("Go Language", "go", evaluator, plugin);
+         *             });
          *         });
          *     });
          * 
