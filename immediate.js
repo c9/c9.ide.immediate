@@ -319,7 +319,69 @@ define(function(require, exports, module) {
          * an (multi-line) epxression in is called a cell. A cell can have one
          * or more 'widgets' that display HTML or plain text, which are usually
          * the result of executing the expression.
+         * 
          * @class immediate.Cell
+         * @extends Object
+         */
+        /**
+         * The ace session that the cell belongs to.
+         * @property {ace.Session} session
+         * @readonly
+         */
+        /**
+         * Adds an HTML based widget to the cell. Note that the cell height is
+         * always N x the line height of ace.
+         * 
+         * @method addWidget
+         * @param {Object}      options
+         * @param {String}      [options.html]         An html string that is inserted as the widget of this cell.
+         * @param {HTMLElement} [options.el]           A reference to an html element that will be appended to this cell as it's widget.
+         * @param {Boolean}     [options.coverLine]    Specifies whether the widget should cover the line before it.
+         * @param {Boolean}     [options.coverGutter]  Specifies whether the widget should draw over the gutter.
+         * @param {Number}      [options.pixelHeight]  The height of the widget in pixels.
+         * @param {Number}      [options.rowCount]     The height of the widget in number of rows.
+         * @param {Number}      [options.row]          The row at which to insert the widget, defaults to the row after the cell.
+         * @param {Boolean}     [options.fixedWidth]   Whether the widget has a fixed width.
+         */
+        /**
+         * Adds a string as plain text to the cell
+         * @method insert
+         * @param {Object} [pos]         The position to insert the text at.
+         * @param {Number} [pos.column]  The column (0 based)
+         * @param {Number} [pos.row]     The row (0 based)
+         * @param {String} text          The value to insert
+         */
+        /**
+         * Toggle the visibility of the loading indicator of the cell.
+         * @method setWaiting
+         * @param {Boolean}  Turns the loading indicator in the gutter of the 
+         *   cell on/off.
+         */
+        /**
+         * Set the contents of this cell. This method removes any widget that is
+         * attache to this cell.
+         * @method setValue
+         * @param {String} value      The new value of this cell.
+         * @param {1/-1}   selection  Where to place the cursor. `1` for the 
+         *   end of the contents and `-1` for the beginning.
+         */
+        /**
+         * Retrieve the contents of this cell.
+         * @method getValue
+         * @return {String}
+         */
+        /**
+         * Retrieve a range object poining to the contents of this cell.
+         * @method getRange
+         * @return {ace.Range}
+         */
+        /**
+         * Remove the widget from this cell
+         * @method removeWidget
+         */
+        /**
+         * Remove this cell from the session.
+         * @method remove
          */
         /**
          * The immediate handle, provides an API for adding 
