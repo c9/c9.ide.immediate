@@ -315,8 +315,8 @@ define(function(require, exports, module) {
          * @param {String}          [done.message] The message to print below the cell in plain text.
          */
         /**
-         * A cell in the immediate REPL. Each section where a user can write
-         * an (multi-line) epxression in is called a cell. A cell can have one
+         * A cell in the immediate REPL. Each section in which a user can write
+         * a (multi-line) expression is called a cell. A cell can have one
          * or more 'widgets' that display HTML or plain text, which are usually
          * the result of executing the expression.
          * 
