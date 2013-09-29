@@ -99,7 +99,24 @@ define(function(require, exports, module) {
          */
         handle.freezePublicAPI({
             _events : [
-                
+                /**
+                 * @event addEvaluator
+                 * @param {Object}              e
+                 * @param {String}              e.caption     The caption of the evaluator.
+                 * @param {String}              e.id          The unique identifier of the evaluator.
+                 * @param {immediate.evaluator} e.evaluator   The evaluator.
+                 * @param {Plugin}              e.plugin      The plugin responsible for adding the evaluator.
+                 */
+                "addEvaluator",
+                /**
+                 * @event removeEvaluator
+                 * @param {Object}              e
+                 * @param {String}              e.caption     The caption of the evaluator.
+                 * @param {String}              e.id          The unique identifier of the evaluator.
+                 * @param {immediate.evaluator} e.evaluator   The evaluator.
+                 * @param {Plugin}              e.plugin      The plugin responsible for adding the evaluator.
+                 */
+                "removeEvaluator"
             ],
             
             /**
@@ -110,7 +127,7 @@ define(function(require, exports, module) {
              * @param {String}              id          The unique identifier of this evaluator.
              * @param {immediate.evaluator} evaluator   The evaluator for your runtime.
              * @param {Plugin}              plugin      The plugin responsible for adding the evaluator.
-             * @fires addType
+             * @fires addEvaluator
              */
             addEvaluator : function(caption, id, evaluator, plugin){
                 if (replTypes[id])
@@ -123,11 +140,10 @@ define(function(require, exports, module) {
                     evaluator : evaluator,
                     plugin    : plugin
                 };
-                emit("addType", replTypes[id]);
+                emit("addEvaluator", replTypes[id]);
                 
                 plugin.addOther(function(){ 
-                    emit("removeType", replTypes[id]);
-                    delete replTypes[id]; 
+                    handle.removeEvaluator(id);
                 });
             },
             
@@ -136,11 +152,11 @@ define(function(require, exports, module) {
              */
             findEvaluator : function(type, callback){
                 if (!type || !replTypes[type]) {
-                    handle.on("addType", function wait(e){
+                    handle.on("addEvaluator", function wait(e){
                         if (!type || e.id == type)
                             callback(e.id, replTypes[e.id].evaluator);
                         
-                        handle.off("addType", wait);
+                        handle.off("addEvaluator", wait);
                     });
                 }
                 else {
@@ -152,7 +168,7 @@ define(function(require, exports, module) {
              * 
              */
             removeEvaluator : function(id){
-                emit("removeType", replTypes[id]);
+                emit("removeEvaluator", replTypes[id]);
                 delete replTypes[id];
             }
         });
@@ -198,7 +214,7 @@ define(function(require, exports, module) {
                     addType(t.caption, type, t.plugin);
                 }
                 
-                handle.on("addType", function(e){
+                handle.on("addEvaluator", function(e){
                     addType(e.caption, e.id, e.plugin);
                 });
             });
