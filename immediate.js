@@ -188,6 +188,7 @@ define(function(require, exports, module) {
             
             /**
              * Immediate Pane for Cloud9 IDE
+             * @class immediate.Immediate
              * @extends Editor
              */
             /**
