@@ -8,7 +8,6 @@ define(function(require, module, exports) {
         var immediate = imports.immediate;
         
         function Evaluator(developer, deps, options){
-            // Editor extends ext.Plugin
             var plugin = new Plugin(developer, deps);
             var emit   = plugin.getEmitter();
             emit.setMaxListeners(1000);
