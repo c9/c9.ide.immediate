@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    main.consumes = ["Plugin", "immediate", "settings"];
+    main.consumes = ["immediate", "settings", "Evaluator"];
     main.provides = ["immediate.browserjs"];
     return main;
     
@@ -27,13 +27,19 @@ define(function(require, exports, module) {
     */
 
     function main(options, imports, register) {
-        var Plugin    = imports.Plugin;
-        // var settings  = imports.settings;
+        var Evaluator = imports.Evaluator;
+        var settings  = imports.settings;
         var immediate = imports.immediate;
         
         /***** Initialization *****/
         
-        var plugin = new Plugin("Ajax.org", main.consumes);
+        var plugin = new Evaluator("Ajax.org", main.consumes, {
+            caption : "Javascript (browser)",
+            id      : "jsbrowser",
+            name    : "Test",
+            mode    : "ace/mode/javascript",
+            message : ""
+        });
         // var emit   = plugin.getEmitter();
         
         var iframe, win;
@@ -43,9 +49,6 @@ define(function(require, exports, module) {
             if (loaded) return;
             loaded = true;
             
-            immediate.addEvaluator("Javascript (browser)", 
-                "jsbrowser", evaluator, plugin);
-    
             iframe = document.body.appendChild(document.createElement("iframe"));
             iframe.style.width    = "1px";
             iframe.style.height   = "1px";
@@ -349,66 +352,70 @@ define(function(require, exports, module) {
             }
         }
         
-        var evaluator = {
-            name        : "Test",
-            mode        : "ace/mode/javascript",
-            message     : "",
-            canEvaluate : function(str) { return str.trim() ? true : false; },
-            evaluate    :  function(expression, cell, cb) {
-                // Ignore heroku command if typed
-                // str = str.replace(/^heroku\s+/, "");
-                
-                // cell.addWidget({rowCount: 6, html:"<img src='http://martin.bravenboer.name/logo-trans-85.png'>"})
-                // cell.addWidget({rowCount: 8, el:editor.container, editor: editor})
-                
-                // var session = cell.session;
-                // var args    = str.trim().split(" ");
-                // if (evaluator.name && str.indexOf("-a") == -1)
-                //     args.push("-a", evaluator.name);
-                
-                // cb("Authorization Required");
-                // cell.insert(data);
-                
-                // //cell.addWidget({rowCount: 6, html:"<span class='error'>" + data + "</span>"});
-                // cell.insert(pos, "Error: " + data);
-                
-                // cb(buffer);
-                 
-                var output = new Console(cell);
-                 
-                win.console = output;
-                
+        function canEvaluate(str) { 
+            return str.trim() ? true : false; 
+        };
+        
+        function evaluate(expression, cell, cb) {
+            // Ignore heroku command if typed
+            // str = str.replace(/^heroku\s+/, "");
+            
+            // cell.addWidget({rowCount: 6, html:"<img src='http://martin.bravenboer.name/logo-trans-85.png'>"})
+            // cell.addWidget({rowCount: 8, el:editor.container, editor: editor})
+            
+            // var session = cell.session;
+            // var args    = str.trim().split(" ");
+            // if (evaluator.name && str.indexOf("-a") == -1)
+            //     args.push("-a", evaluator.name);
+            
+            // cb("Authorization Required");
+            // cell.insert(data);
+            
+            // //cell.addWidget({rowCount: 6, html:"<span class='error'>" + data + "</span>"});
+            // cell.insert(pos, "Error: " + data);
+            
+            // cb(buffer);
+             
+            var output = new Console(cell);
+             
+            win.console = output;
+            
+            try {
+                win.thrown = false;
+                win.eval("try{window.result = " + expression 
+                    + "}catch(e){window.thrown = true; window.result = e}");
+            } catch(e) {
                 try {
                     win.thrown = false;
-                    win.eval("try{window.result = " + expression 
+                    win.eval("try{" + expression 
                         + "}catch(e){window.thrown = true; window.result = e}");
                 } catch(e) {
-                    try {
-                        win.thrown = false;
-                        win.eval("try{" + expression 
-                            + "}catch(e){window.thrown = true; window.result = e}");
-                    } catch(e) {
-                        win.result = e;
-                        win.thrown = 2;
-                    }
+                    win.result = e;
+                    win.thrown = 2;
                 }
-                var result = win.result;
-                if (win.thrown)
-                    result = { "$$error" : result, type: win.thrown }; 
-    
-                output.write(result, "return");
-                 
-                cell.setWaiting(false);
-                //cb("Done");
-                
-                delete win.result;
             }
-        };
+            var result = win.result;
+            if (win.thrown)
+                result = { "$$error" : result, type: win.thrown }; 
+
+            output.write(result, "return");
+             
+            cell.setWaiting(false);
+            //cb("Done");
+            
+            delete win.result;
+        }
         
         /***** Lifecycle *****/
         
         plugin.on("load", function(){
             load();
+        });
+        plugin.on("canEvaluate", function(e){
+            return canEvaluate(e.expression);
+        });
+        plugin.on("evaluate", function(e){
+            return evaluate(e.expression, e.cell, e.callback);
         });
         plugin.on("enable", function(){
             
