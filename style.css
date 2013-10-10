@@ -36,6 +36,7 @@
     display : inline-block;
     padding-left : 10px;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     position : relative;
     white-space: nowrap;
 }
