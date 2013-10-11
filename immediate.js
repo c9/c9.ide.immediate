@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    main.consumes = ["editors", "ui", "settings", "tabManager", "ace"];
+    main.consumes = ["editors", "ui", "settings", "tabManager", "ace", "menus"];
     main.provides = ["immediate"];
     return main;
 
@@ -8,6 +8,7 @@ define(function(require, exports, module) {
         // var settings = imports.settings;
         var tabs     = imports.tabManager;
         var ui       = imports.ui;
+        var menus    = imports.menus;
         
         var Repl     = require("plugins/c9.ide.ace.repl/repl").Repl;
         var markup   = require("text!./immediate.xml");
@@ -39,6 +40,10 @@ define(function(require, exports, module) {
                     })
                 )
             );
+
+            menus.addItemByPath("Window/Open New Immediate Window", new ui.item({
+                command : "openterminal"
+            }), 31, handle);
             
             // Insert some CSS
             ui.insertCss(require("text!./style.css"), options.staticPrefix, handle);
