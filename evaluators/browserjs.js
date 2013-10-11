@@ -36,7 +36,6 @@ define(function(require, exports, module) {
         var plugin = new Evaluator("Ajax.org", main.consumes, {
             caption : "Javascript (browser)",
             id      : "jsbrowser",
-            name    : "Test",
             mode    : "ace/mode/javascript",
             message : ""
         });
