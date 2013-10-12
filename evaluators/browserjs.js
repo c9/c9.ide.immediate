@@ -184,6 +184,15 @@ define(function(require, exports, module) {
                 stack = stack.join("<br />");
                 insert(html, "<div class='stack'>" + stack + "</div>");
             }
+            else if (object instanceof win.Element) {
+                var children = object.childNodes;
+                for (var i = 0; i < children.length; i++) {
+                    renderType(children[i], html, false, 2);
+                    insert(html, "<br />");
+                }
+                insert(html, "&lt;/" + object.tagName.toLowerCase() + "&gt;");
+                return;
+            }
             
             var keys = Object.getOwnPropertyNames(object);
             keys.forEach(function(name){
@@ -201,7 +210,9 @@ define(function(require, exports, module) {
             }
             else if (type == "string") {
                 if (!log || log == 2) {
-                    var str = "\"<span class='string'>" + JSON.stringify(object).slice(1, -1) + "</span>\"";
+                    var value = JSON.stringify(object).slice(1, -1)
+                        .replace(/</g, "&lt;");
+                    var str   = "\"<span class='string'>" + value + "</span>\"";
                     if (name && object.length > 100) {
                         var event = "this.style.display = \"none\";\
                             this.nextSibling.style.display = \"inline\";\
@@ -286,38 +297,69 @@ define(function(require, exports, module) {
                 
                 insertTree(html, caption, object, parseChildren);
             }
-            // HTML Element
-            else if (object instanceof win.HTMLDocument 
-              || object instanceof win.HTMLElement) {
-                
-            }
-            // XML Element
-            else if (object instanceof win.XMLDocument 
-              || object instanceof win.Element) {
-                
+            // HTML/XML Element
+            else if (object instanceof win.Node && log === false) {
+                // Text Node
+                if (object.nodeType == 3) {
+                    insert(html, "<span class='textnode'>" 
+                        + object.nodeValue.replace(/</g, "&lt;") + "</span>");
+                }
+                // CDATA Section
+                else if (object.nodeType == 4) {
+                    insert(html, "<span class='cdata'>&lt;![CDATA[" 
+                        + object.nodeValue.replace(/</g, "&lt;") 
+                        + "]]&gt;</span>");
+                }
+                // Comment
+                else if (object.nodeType == 11) {
+                    insert(html, "<span class='comment'>&lt;!--" 
+                        + object.nodeValue.replace(/</g, "&lt;") 
+                        + "--&gt;</span>");
+                }
+                // Element Node
+                else if (object.nodeType == 1) {
+                    var node = ["&lt;" + object.tagName.toLowerCase()];
+                    for (var attr, i = 0, l = object.attributes.length; i < l; i++) {
+                        attr = object.attributes.item(i);
+                        node.push(attr.nodeName + "=\"" + attr.nodeValue.replace(/"/g, "&quot;") + "\"");
+                    }
+                    node = node.join(" ");
+                    node += object.childNodes.length ? "&gt;" : "&gt;&lt;/" 
+                        + object.tagName.toLowerCase() + "&gt;";
+                    
+                    caption = document.createElement("span");
+                    insert(caption, node, name);
+                    
+                    if (object.childNodes.length)
+                        insertTree(html, caption, object, parseChildren);
+                    else {
+                        caption.className = "emptynode";
+                        html.appendChild(caption);
+                    }
+                }
             }
             // Object
             else {
-                var type;
+                var heading;
                 if (object["$$error"]) {
                     object = object["$$error"];
-                    type   = object.stack.split(":")[0];
-                    type = "<span class='err'>"
-                        + type + ": "
+                    heading   = object.stack.split(":")[0];
+                    heading = "<span class='err'>"
+                        + heading + ": "
                         + (object.message || (!object ? object : object.toString()))
                         + "</span>";
                     
                     caption = document.createElement("span");
-                    insert(caption, type, name);
+                    insert(caption, heading, name);
                 }
                 else {
-                    type = (object.constructor.toString().match(/^function\s+(\w+)/) 
+                    heading = (object.constructor.toString().match(/^function\s+(\w+)/) 
                         || [0,"(anonymous function)"])[1]
                     if (short === true) 
-                        return insert(html, type, name);
+                        return insert(html, heading, name);
                 
                     caption = document.createElement("span");
-                    insert(caption, type, name);
+                    insert(caption, heading, name);
                     var preview = caption.appendChild(document.createElement("span"));
                     preview.className = "preview";
                     
@@ -334,7 +376,7 @@ define(function(require, exports, module) {
 
                             insert(preview, (i !== 0 ? ", " : ""));
                             insert(preview, "", props[i]);
-                            renderType(object[props[i]], preview, true, true);
+                            renderType(object[props[i]], preview, 2, true);
                             count++;
                         }
                         if (props.length > count)

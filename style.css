@@ -60,6 +60,10 @@
 .immediate .treecontainer>.property{
     padding-left: 10px;
 }
+.immediate .textnode, .immediate .comment, .immediate .emptynode,
+.immediate .cdata{
+    padding-left : 10px;
+}
 .immediate .null{
     display : inline-block;
     color : gray;

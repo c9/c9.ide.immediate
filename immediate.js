@@ -41,8 +41,14 @@ define(function(require, exports, module) {
                 )
             );
 
-            menus.addItemByPath("Window/Open New Immediate Window", new ui.item({
-                command : "openterminal"
+            menus.addItemByPath("Window/New Immediate Window", new ui.item({
+                onclick : function(){
+                    tabs.open({
+                        active     : true,
+                        pane       : this.parentNode.pane,
+                        editorType : "immediate"
+                    }, function(){});
+                }
             }), 31, handle);
             
             // Insert some CSS
