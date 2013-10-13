@@ -83,7 +83,7 @@ define(function(require, exports, module) {
         });
         
         //Search through pages
-        function search(id){
+        function search(){
             return !tabs.getTabs().every(function(tab){
                 if (tab.editorType == "immediate") {
                     tabs.focusTab(tab);
