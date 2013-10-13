@@ -1,14 +1,19 @@
 define(function(require, exports, module) {
-    main.consumes = ["editors", "ui", "settings", "tabManager", "ace", "menus"];
+    main.consumes = [
+        "editors", "ui", "settings", "tabManager", "ace", "menus", "commands",
+        "console"
+    ];
     main.provides = ["immediate"];
     return main;
 
     function main(options, imports, register) {
-        var editors  = imports.editors;
-        // var settings = imports.settings;
-        var tabs     = imports.tabManager;
-        var ui       = imports.ui;
-        var menus    = imports.menus;
+        var editors   = imports.editors;
+        var settings  = imports.settings;
+        var tabs      = imports.tabManager;
+        var ui        = imports.ui;
+        var menus     = imports.menus;
+        var commands  = imports.commands;
+        var c9console = imports.console;
         
         var Repl     = require("plugins/c9.ide.ace.repl/repl").Repl;
         var markup   = require("text!./immediate.xml");
@@ -33,7 +38,7 @@ define(function(require, exports, module) {
                         onclick : function(e){
                             tabs.open({
                                 active     : true,
-                                pane        : this.parentNode.pane,
+                                pane       : this.parentNode.pane,
                                 editorType : "immediate"
                             }, function(){});
                         }
@@ -51,9 +56,42 @@ define(function(require, exports, module) {
                 }
             }), 31, handle);
             
+            commands.addCommand({
+                name    : "showimmediate",
+                group   : "Panels",
+                exec    : function (editor) {
+                    // Search for the output pane
+                    if (search()) return;
+                    
+                    // If not found show the console
+                    c9console.show();
+                    
+                    // Search again
+                    if (search()) return;
+                    
+                    // Else open the output panel in the console
+                    tabs.open({
+                        editorType : "immediate", 
+                        active     : true,
+                        pane        : c9console.getPanes()[0],
+                    }, function(){});
+                }
+            }, handle);
+            
             // Insert some CSS
             ui.insertCss(require("text!./style.css"), options.staticPrefix, handle);
         });
+        
+        //Search through pages
+        function search(id){
+            return !tabs.getTabs().every(function(tab){
+                if (tab.editorType == "immediate") {
+                    tabs.focusTab(tab);
+                    return false;
+                }
+                return true;
+            });
+        }
         
         function Immediate(){
             var Baseclass = editors.findEditor("ace");
