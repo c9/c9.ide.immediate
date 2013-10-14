@@ -423,6 +423,17 @@ define(function(require, exports, module) {
              
             win.console = output;
             
+            var result = evaluateHeadless(expression);
+
+            output.write(result, "return");
+             
+            cell.setWaiting(false);
+            //cb("Done");
+            
+            delete win.result;
+        }
+        
+        function evaluateHeadless(expression) {
             try {
                 win.thrown = false;
                 win.eval("try{window.result = " + expression 
@@ -439,14 +450,8 @@ define(function(require, exports, module) {
             }
             var result = win.result;
             if (win.thrown)
-                result = { "$$error" : result, type: win.thrown }; 
-
-            output.write(result, "return");
-             
-            cell.setWaiting(false);
-            //cb("Done");
-            
-            delete win.result;
+                result = { "$$error" : result, type: win.thrown };
+            return result;
         }
         
         /***** Lifecycle *****/
@@ -475,7 +480,10 @@ define(function(require, exports, module) {
         /**
          * 
          **/
-        plugin.freezePublicAPI({ });
+        plugin.freezePublicAPI({
+            /** @ignore */
+            evaluateHeadless: evaluateHeadless
+        });
         
         register(null, {
             "immediate.browserjs": plugin
