@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     main.consumes = [
-        "editors", "ui", "settings", "tabManager", "ace", "menus", "commands",
+        "editors", "ui", "tabManager", "ace", "menus", "commands",
         "console"
     ];
     main.provides = ["immediate"];
@@ -8,7 +8,6 @@ define(function(require, exports, module) {
 
     function main(options, imports, register) {
         var editors   = imports.editors;
-        var settings  = imports.settings;
         var tabs      = imports.tabManager;
         var ui        = imports.ui;
         var menus     = imports.menus;
