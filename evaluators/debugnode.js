@@ -175,12 +175,12 @@ define(function(require, exports, module) {
             else if (object.$arrayWalker) {
                 
             }
-            // else if (object instanceof win.Error) {
-            //     var stack = object.stack.split("\n");
-            //     stack.shift();
-            //     stack = stack.join("<br />");
-            //     insert(html, "<div class='stack'>" + stack + "</div>");
-            // }
+            else if (object instanceof Error) {
+                var stack = (object.stack || "").split("\n");
+                stack.shift();
+                stack = stack.join("<br />");
+                insert(html, "<div class='stack'>" + stack + "</div>");
+            }
             // else if (object instanceof win.Element) {
             //     if (!html.parentNode.innerText.match(/HTML\w*Element/)) {
             //         var children = object.childNodes;
@@ -381,10 +381,9 @@ define(function(require, exports, module) {
                 var heading;
                 if (object["$$error"]) {
                     object = object["$$error"];
-                    heading   = object.stack.split(":")[0];
+                    heading   = (object.stack || "").split(":")[0];
                     heading = "<span class='err'>"
-                        + heading + ": "
-                        + (object.message || (!object ? object : object.toString()))
+                        + object.message
                         + "</span>";
                     
                     caption = document.createElement("span");
