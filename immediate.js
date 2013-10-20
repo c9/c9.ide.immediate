@@ -190,7 +190,7 @@ define(function(require, exports, module) {
                         }
                         else {
                             session.repl.setEvaluator(evaluator);
-                            session.repl.setMode(evaluator.mode);
+                            session.repl.session.setMode(evaluator.mode);
                         }
                     });
                 };

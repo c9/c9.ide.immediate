@@ -131,3 +131,10 @@
 .immediate .ace_gutter-cell.repl_dots:after{
     content: "";
 }
+.immediate .ace_gutter-cell.repl_output.waiting:after {
+    height: 17px;
+    right: 0;
+    width: 12px;
+    content: "";
+    margin-top: 0px;
+}

@@ -4,15 +4,6 @@ define(function(require, exports, module) {
     return main;
     
     /*
-        Auto-complete
-        i had a simple parser to get expression backwards
-        https://github.com/MikeRatcliffe/Acebug/blob/master/chrome/content/autocompleter.js#L350-L592
-        and a simple fuzzysearch https://github.com/MikeRatcliffe/Acebug/blob/master/chrome/content/autocompleter.js#L278-L332
-        evaluate expression before and 
-        Object.getOwnPropertyNames on the result
-    */
-    
-    /*
         Test Cases:
         1
         "1"
@@ -121,6 +112,7 @@ define(function(require, exports, module) {
                 var nodes = div.lastChild.querySelectorAll("a");
                 for (var i = 0; i < nodes.length; i++) {
                     nodes[i].addEventListener("click", function(e){
+                        //@todo
                         alert(this.firstChild.nodeValue);
                         e.stopPropagation();
                     });
@@ -291,6 +283,7 @@ define(function(require, exports, module) {
                             renderType(item, html, false, 2);
                             if (i < object.length - 1)
                                 insert(html, ", ");
+                            return true;
                         });
                         insert(html, "]");
                         return;
