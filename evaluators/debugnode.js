@@ -454,6 +454,9 @@ define(function(require, exports, module) {
             
             lastCell = cell;
             
+            if (cell.html)
+                cell.html.innerHTML = "";
+            
             evaluateHeadless(expression, function(result){
                 writeLog(result, "return", cell);
                 cell.setWaiting(false);
