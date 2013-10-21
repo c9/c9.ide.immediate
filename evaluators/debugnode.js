@@ -2,7 +2,7 @@ define(function(require, exports, module) {
     main.consumes = [
         "immediate", "settings", "debugger", "Evaluator", "callstack"
     ];
-    main.provides = ["immediate.debugger"];
+    main.provides = ["immediate.debugnode"];
     return main;
 
     function main(options, imports, register) {
@@ -466,6 +466,8 @@ define(function(require, exports, module) {
         }
         
         function evaluateHeadless(expression, callback) {
+            if (!callback) return;
+            
             dbg && dbg.evaluate(expression, callstack.activeFrame, 
               !callstack.activeFrame, false, function(err, variable){
                 if (err)
@@ -511,11 +513,11 @@ define(function(require, exports, module) {
          **/
         plugin.freezePublicAPI({
             /** @ignore */
-            evaluateHeadless: function(){}
+            evaluateHeadless: evaluateHeadless
         });
         
         register(null, {
-            "immediate.debugger": plugin
+            "immediate.debugnode": plugin
         });
     }
 });
