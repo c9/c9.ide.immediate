@@ -201,8 +201,10 @@ define(function(require, exports, module) {
                 currentDocument = e.doc;
                 var session = e.doc.getSession();
                 
-                if (session.type)
+                if (session.type) {
                     ddType.setValue(session.type);
+                    ddType.dispatchEvent("afterchange");
+                }
                 
                 if (session.repl)
                     session.repl.attach(ace);
@@ -222,6 +224,7 @@ define(function(require, exports, module) {
                 if (e.state.type) {
                     e.doc.getSession().type = e.state.type;
                     ddType.setValue(e.state.type);
+                    ddType.dispatchEvent("afterchange");
                 }
             });
             plugin.on("clear", function(){
