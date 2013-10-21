@@ -219,8 +219,10 @@ define(function(require, exports, module) {
                 e.state.type      = e.doc.getSession().type;
             });
             plugin.on("setState", function(e){
-                if (e.state.type)
+                if (e.state.type) {
+                    e.doc.getSession().type = e.state.type;
                     ddType.setValue(e.state.type);
+                }
             });
             plugin.on("clear", function(){
             });
