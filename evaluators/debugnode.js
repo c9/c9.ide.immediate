@@ -499,7 +499,26 @@ define(function(require, exports, module) {
                     return m.name;
                 });
                 
-                callback(null, results);
+                function check(variable){
+                    if (variable.prototype) {
+                        if (!dbg) return callback(new Error("disconnected"));
+                        
+                        dbg.getProperties(variable.prototype, function(err, props){
+                            if (err) return callback(err);
+                            
+                            props.forEach(function(prop){
+                                if (results.indexOf(prop.name) === -1)
+                                    results.push(prop.name);
+                            });
+                            
+                            check(variable.prototype);
+                        })
+                    }
+                    else {
+                        callback(null, results);
+                    }
+                }
+                check(variable);
             });
         }
         
