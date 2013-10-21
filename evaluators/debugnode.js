@@ -488,6 +488,21 @@ define(function(require, exports, module) {
             });
         }
         
+        function getAllProperties(context, callback){
+            evaluateHeadless(context, function(variable){
+                if (variable["$$error"])
+                    return callback(variable["$$error"]);
+                if (!variable.properties)
+                    return callback(null, []);
+                    
+                var results = variable.properties.map(function(m){
+                    return m.name;
+                });
+                
+                callback(null, results);
+            });
+        }
+        
         /***** Lifecycle *****/
         
         plugin.on("load", function(){
@@ -516,7 +531,10 @@ define(function(require, exports, module) {
          **/
         plugin.freezePublicAPI({
             /** @ignore */
-            evaluateHeadless: evaluateHeadless
+            evaluateHeadless: evaluateHeadless,
+            
+            /** @ignore */
+            getAllProperties: getAllProperties
         });
         
         register(null, {
