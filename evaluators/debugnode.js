@@ -77,8 +77,11 @@ define(function(require, exports, module) {
         }
         
         function scrollIntoView(cell) {
-            var renderer = cell.session.repl.editor.renderer;
+            if (!cell.session.repl.editor)
+                return;
+
             // TODO add a better way to scroll ace cursor into view when rendered
+            var renderer = cell.session.repl.editor.renderer;
             setTimeout(function() {
                 renderer.scrollCursorIntoView();
             });
@@ -136,7 +139,7 @@ define(function(require, exports, module) {
                     container.className = "treecontainer";
                     container.style.display = "none";
                     drawChildren(object, container, function(){
-                        findWidgetAnUpdate(target);
+                        findWidgetAndUpdate(target);
                     });
                 }
                 
@@ -146,11 +149,11 @@ define(function(require, exports, module) {
                 
                 // hack!
                 var target = e.currentTarget;
-                findWidgetAnUpdate(target)
+                findWidgetAndUpdate(target)
             })
         }
         
-        function findWidgetAnUpdate(target){
+        function findWidgetAndUpdate(target){
             while(target) {
                 if (target.updateWidget) {
                     target.updateWidget();
@@ -201,7 +204,7 @@ define(function(require, exports, module) {
                 return;
             }
             
-            object.properties.forEach(function(prop){
+            (object.properties || []).forEach(function(prop){
                 renderType(prop, html, 2, 2, prop.name);
                 insert(html, "<br />");
             });
@@ -211,7 +214,7 @@ define(function(require, exports, module) {
         
         function getOwnProperties(object){
             var result = [];
-            object.properties.forEach(function(o){
+            (object.properties || []).forEach(function(o){
                 if (typeof o.name != "number")
                     result.push(o)
             })
@@ -285,7 +288,7 @@ define(function(require, exports, module) {
                         
                         insert(preview, "[", name);
                         
-                        object.properties.every(function(item, i){
+                        (object.properties || []).every(function(item, i){
                             if (typeof item.name != "number") {
                                 j++;
                                 return true;
@@ -310,13 +313,13 @@ define(function(require, exports, module) {
                             
                         insert(preview, "]");
                     }
-                    else if (object.properties.length > 100) {
+                    else if ((object.properties || "").length > 100) {
                         caption = document.createElement("span");
                         insert(caption, "Array [" + object.properties.length + "]", name);
                     }
                     else {
                         insert(html, "[", name);
-                        object.properties.every(function(item, i){
+                        (object.properties || []).every(function(item, i){
                             if (typeof item.name != "number") {
                                 j++;
                                 return true;
@@ -403,7 +406,7 @@ define(function(require, exports, module) {
                     if (short !== 2) {
                         insert(preview, " {");
                         
-                        props = object.properties;
+                        props = object.properties || [];
                         count = 0;
                         for (var i = 0; count < 5 && i < props.length; i++) {
                             if ((props[i].name || "").indexOf("function") === 0)
