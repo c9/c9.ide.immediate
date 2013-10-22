@@ -461,6 +461,9 @@ define(function(require, exports, module) {
                 cell.html.innerHTML = "";
             
             evaluateHeadless(expression, function(result){
+                if (cell.setError && result["$$error"])
+                    return cell.setError(result["$$error"]);
+                
                 writeLog(result, "return", cell);
                 cell.setWaiting(false);
             });
