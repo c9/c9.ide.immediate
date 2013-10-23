@@ -461,6 +461,9 @@ define(function(require, exports, module) {
                 cell.html.innerHTML = "";
             
             evaluateHeadless(expression, function(result){
+                if (cell.setError && result["$$error"])
+                    return cell.setError(result["$$error"]);
+                
                 writeLog(result, "return", cell);
                 cell.setWaiting(false);
             });
@@ -485,6 +488,40 @@ define(function(require, exports, module) {
                 }
                 
                 callback(variable);
+            });
+        }
+        
+        function getAllProperties(context, callback){
+            evaluateHeadless(context, function(variable){
+                if (variable["$$error"])
+                    return callback(variable["$$error"]);
+                if (!variable.properties)
+                    return callback(null, []);
+                    
+                var results = variable.properties.map(function(m){
+                    return m.name;
+                });
+                
+                function check(variable){
+                    if (variable.prototype) {
+                        if (!dbg) return callback(new Error("disconnected"));
+                        
+                        dbg.getProperties(variable.prototype, function(err, props){
+                            if (err) return callback(err);
+                            
+                            props.forEach(function(prop){
+                                if (results.indexOf(prop.name) === -1)
+                                    results.push(prop.name);
+                            });
+                            
+                            check(variable.prototype);
+                        })
+                    }
+                    else {
+                        callback(null, results);
+                    }
+                }
+                check(variable);
             });
         }
         
@@ -516,7 +553,10 @@ define(function(require, exports, module) {
          **/
         plugin.freezePublicAPI({
             /** @ignore */
-            evaluateHeadless: evaluateHeadless
+            evaluateHeadless: evaluateHeadless,
+            
+            /** @ignore */
+            getAllProperties: getAllProperties
         });
         
         register(null, {

@@ -449,6 +449,25 @@ define(function(require, exports, module) {
             return result;
         }
         
+        function getAllProperties(context, callback){
+            var results = evaluateHeadless(
+                "(" + function getAllProperties(obj) {
+                    if (obj == null)
+                        return [];
+                    var results = [];
+                    do {
+                        var props = Object.getOwnPropertyNames(obj);
+                        props.forEach(function(prop){
+                            if (results.indexOf(prop) === -1)
+                                results.push(prop);
+                        });
+                    } while ((obj = Object.getPrototypeOf(obj)));
+                    return results;
+                }.toString() + ")(" + context + ")");
+            
+            callback(null, results);
+        }
+        
         /***** Lifecycle *****/
         
         plugin.on("load", function(){
@@ -477,7 +496,10 @@ define(function(require, exports, module) {
          **/
         plugin.freezePublicAPI({
             /** @ignore */
-            evaluateHeadless: evaluateHeadless
+            evaluateHeadless: evaluateHeadless,
+            
+            /** @ignore */
+            getAllProperties: getAllProperties
         });
         
         register(null, {
