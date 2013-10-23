@@ -428,14 +428,16 @@ define(function(require, exports, module) {
         
         function evaluateHeadless(expression) {
             try {
+                // TODO: remove since this is more misleading than useful
+                // tries to evaluate {} as object instead of block
                 win.thrown = false;
-                win.eval("try{window.result = " + expression 
-                    + "}catch(e){window.thrown = true; window.result = e}");
+                win.eval("try{window.result = (" + expression 
+                    + ")}catch(e){window.thrown = true; window.result = e}");
             } catch(e) {
                 try {
                     win.thrown = false;
-                    win.eval("try{" + expression 
-                        + "}catch(e){window.thrown = true; window.result = e}");
+                    win.eval("try{window.result = eval('" + expression.replace(/'/g, "\\'") 
+                        + "')}catch(e){window.thrown = true; window.result = e}");
                 } catch(e) {
                     win.result = e;
                     win.thrown = 2;
