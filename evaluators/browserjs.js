@@ -199,8 +199,8 @@ define(function(require, exports, module) {
             var type = typeof object;
             var caption;
             
-            if (object === undefined || object == null) {
-                insert(html, "<span class='null'>" + type + "</span>", name);
+            if (object === undefined || object === null) {
+                insert(html, "<span class='null'>" + object + "</span>", name);
             }
             else if (type == "string") {
                 if (!log || log == 2) {
@@ -436,7 +436,7 @@ define(function(require, exports, module) {
             } catch(e) {
                 try {
                     win.thrown = false;
-                    win.eval("try{window.result = eval('" + expression.replace(/'/g, "\\'") 
+                    win.eval("try{window.result = eval('" + expression.replace(/['\n\r\\]/g, "\\$&") 
                         + "')}catch(e){window.thrown = true; window.result = e}");
                 } catch(e) {
                     win.result = e;
