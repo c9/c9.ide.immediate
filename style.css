@@ -48,7 +48,7 @@
     position: absolute;
     overflow: hidden;
     text-indent: -2000px;
-    background-image: url(images/tree_close_arrow_small.png);
+    background-image: url("@{image-path}/tree_close_arrow_small.png");
     background-repeat: no-repeat;
 }
 .immediate .treeitem .arrow.expanded{
