@@ -1,6 +1,6 @@
 /*global describe it before after  =*/
 
-require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"], 
+require(["lib/architect/architect", "lib/chai/chai"], 
   function (architect, chai, baseProc) {
     var expect = chai.expect;
     
@@ -71,6 +71,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             packagePath: "plugins/c9.ide.immediate/immediate",
             staticPrefix : "plugins/c9.ide.layout.classic"
         },
+        "plugins/c9.ide.immediate/evaluator",
         "plugins/c9.ide.immediate/evaluators/browserjs",
         "plugins/c9.ide.console/console",
         "plugins/c9.fs/proc",
@@ -85,15 +86,20 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             base        : baseProc,
             runners     : runners
         },
+        "plugins/c9.ide.ui/menus.js",
         
         // Mock plugins
         {
             consumes : ["apf", "ui", "Plugin"],
             provides : [
                 "menus", "layout", "watcher", 
-                "save", "fs", "preferences", "clipboard"
+                "save", "fs", "preferences", "clipboard",
+                "auth.bootstrap", "Dialog", "dialog.alert"
             ],
-            setup    : expect.html.mocked
+            setup    : expect.html.mocked,
+            show: function() {
+                alert(arguments);
+            }
         },
         {
             consumes : ["immediate", "tabManager"],
@@ -128,12 +134,12 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
                 apf.config.setProperty("allow-select", false);
                 apf.config.setProperty("allow-blur", false);
 
-                bar.$ext.style.background = "rgba(220, 220, 220, 0.93)";
-                bar.$ext.style.position = "fixed";
-                bar.$ext.style.left = "20px";
-                bar.$ext.style.right = "20px";
-                bar.$ext.style.bottom = "20px";
-                bar.$ext.style.height = "150px";
+                window.bar.$ext.style.background = "rgba(220, 220, 220, 0.93)";
+                window.bar.$ext.style.position = "fixed";
+                window.bar.$ext.style.left = "20px";
+                window.bar.$ext.style.right = "20px";
+                window.bar.$ext.style.bottom = "20px";
+                window.bar.$ext.style.height = "150px";
       
                 document.body.style.marginBottom = "150px";
                 
