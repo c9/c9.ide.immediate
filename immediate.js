@@ -130,6 +130,7 @@ define(function(require, exports, module) {
                 });
                 btnClear.on("click", function(){
                     plugin.clear();
+                    btnClear.blur();
                 });
                 
                 for (var type in replTypes){
