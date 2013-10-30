@@ -124,6 +124,10 @@ define(function(require, exports, module) {
                 
                 e.htmlNode.className += " immediate";
                 
+                ddType.on("afterchange", function(){
+                    if (currentDocument)
+                        currentDocument.getSession().changeType(ddType.selectedType);
+                });
                 btnClear.on("click", function(){
                     plugin.clear();
                 });
@@ -137,13 +141,9 @@ define(function(require, exports, module) {
                     addType(e.caption, e.id, e.plugin);
                 });
                 
-                
                 menu.on("itemclick", function(e) {
                     var value = e.relatedNode.getAttribute("value");
-                    ddType.selectedType = value;
-                    ddType.setAttribute("caption", e.relatedNode.caption)
-                    if (currentDocument)
-                        currentDocument.getSession().changeType(value);
+                    ddType.setType(value);
                 });
                 
                 function update(e){
@@ -158,10 +158,18 @@ define(function(require, exports, module) {
                         item.setAttribute("selected", selected);
                     });
                     
-                    ddType.setAttribute("caption", selectedItem.caption)
+                    ddType.setType(value);
                 }
                 
                 ddType.setAttribute("submenu", menu);
+                ddType.value = true;
+                ddType.setType = function (type) {
+                    if (type == ddType.selectedType || !replTypes[type])
+                        return;
+                    ddType.selectedType = type;
+                    ddType.setAttribute("caption", replTypes[type].caption);
+                    ddType.dispatchEvent("afterchange");
+                }
                 
                 menu.on("prop.visible", update);
                 update();
@@ -231,8 +239,7 @@ define(function(require, exports, module) {
                 var session = e.doc.getSession();
                 
                 if (session.type) {
-                    ddType.setValue(session.type);
-                    ddType.dispatchEvent("afterchange");
+                    ddType.setType(session.type);
                 }
                 
                 if (session.repl)
@@ -252,8 +259,7 @@ define(function(require, exports, module) {
             plugin.on("setState", function(e){
                 if (e.state.type) {
                     e.doc.getSession().type = e.state.type;
-                    ddType.setValue(e.state.type);
-                    ddType.dispatchEvent("afterchange");
+                    ddType.setType(e.state.type);
                 }
             });
             plugin.on("clear", function(){
