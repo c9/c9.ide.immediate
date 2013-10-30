@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     main.consumes = [
         "editors", "ui", "settings", "tabManager", "ace", "menus", "commands",
-        "console"
+        "console", "ace.status"
     ];
     main.provides = ["immediate"];
     return main;
@@ -14,6 +14,7 @@ define(function(require, exports, module) {
         var menus     = imports.menus;
         var commands  = imports.commands;
         var c9console = imports.console;
+        var aceStatus = imports["ace.status"];
         
         var Repl     = require("plugins/c9.ide.ace.repl/repl").Repl;
         var markup   = require("text!./immediate.xml");
@@ -81,7 +82,7 @@ define(function(require, exports, module) {
             // Insert some CSS
             ui.insertCss(require("text!./style.css"), options.staticPrefix, handle);
         });
-        
+
         //Search through pages
         function search(){
             return !tabs.getTabs().every(function(tab){
@@ -100,14 +101,16 @@ define(function(require, exports, module) {
             var plugin = new Baseclass(true, [], deps);
             // var emit   = plugin.getEmitter();
             
-            var ddType, btnClear, ace;
+            var ddType, btnClear, ace, menu;
             
             plugin.on("draw", function(e){
+                aceStatus.draw();
                 // Create UI elements
                 ui.insertMarkup(e.tab, markup, plugin);
                 
                 ddType    = plugin.getElement("ddType");
                 btnClear  = plugin.getElement("btnClear");
+                menu      = plugin.getElement("menu");
                 
                 ace = plugin.ace;
                 
@@ -121,10 +124,6 @@ define(function(require, exports, module) {
                 
                 e.htmlNode.className += " immediate";
                 
-                ddType.on("afterchange", function(){
-                    if (currentDocument)
-                        currentDocument.getSession().changeType(ddType.value);
-                });
                 btnClear.on("click", function(){
                     plugin.clear();
                 });
@@ -137,14 +136,44 @@ define(function(require, exports, module) {
                 handle.on("addEvaluator", function(e){
                     addType(e.caption, e.id, e.plugin);
                 });
+                
+                
+                menu.on("itemclick", function(e) {
+                    var value = e.relatedNode.getAttribute("value");
+                    ddType.selectedType = value;
+                    ddType.setAttribute("caption", e.relatedNode.caption)
+                    if (currentDocument)
+                        currentDocument.getSession().changeType(value);
+                });
+                
+                function update(e){
+                    if (e && !e.value)
+                        return;
+                    var items = menu.childNodes;
+                    var value = ddType.selectedType || items[0].value;
+                    var selectedItem
+                    items.forEach(function(item){
+                        var selected = item.value == value ? true :  false;
+                        if (selected) selectedItem = item;
+                        item.setAttribute("selected", selected);
+                    });
+                    
+                    ddType.setAttribute("caption", selectedItem.caption)
+                }
+                
+                ddType.setAttribute("submenu", menu);
+                
+                menu.on("prop.visible", update);
+                update();
             });
             
             /***** Method *****/
             
             function addType(caption, value, plugin){
-                var item = ddType.appendChild(new ui.item({
+                var item = menu.appendChild(new ui.item({
                     caption : caption,
-                    value   : value
+                    value   : value,
+                    type    : "radio"
                 }));
                 
                 plugin.addElement(item);
@@ -195,7 +224,7 @@ define(function(require, exports, module) {
                     });
                 };
                 
-                session.changeType(session.type || ddType.value);
+                session.changeType(session.type || ddType.selectedType);
             });
             plugin.on("documentActivate", function(e){
                 currentDocument = e.doc;
