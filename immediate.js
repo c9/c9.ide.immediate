@@ -150,6 +150,10 @@ define(function(require, exports, module) {
                 plugin.addElement(item);
             }
             
+            function setActiveEvaluator(value){
+                ddType.setAttribute("value", value);
+            }
+            
             // Set the tab in loading state - later this could be the output block
             // currentDocument.tab.className.add("loading");
             // settings.save();
@@ -252,7 +256,10 @@ define(function(require, exports, module) {
              * @readonly
              */
             plugin.freezePublicAPI({
-                
+                /**
+                 * 
+                 */
+                setActiveEvaluator : setActiveEvaluator
             });
             
             plugin.load("immediate" + counter++);
