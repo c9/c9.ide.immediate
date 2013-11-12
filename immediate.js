@@ -116,11 +116,11 @@ define(function(require, exports, module) {
                 
                 ace.setOption("printMargin", false);
                 ace.setOption("scrollPastEnd", 0);
-                ace.setOption("fontSize", 11);
                 ace.setOption("showFoldWidgets", false);
                 ace.setOption("highlightActiveLine", false);
                 ace.setOption("highlightGutterLine", false);
-                ace.container.style.lineHeight = "17px";
+                // ace.setOption("fontSize", 11);
+                // ace.container.style.lineHeight = "17px";
                 
                 e.htmlNode.className += " immediate";
                 
