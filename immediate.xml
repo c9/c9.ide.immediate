@@ -7,17 +7,17 @@
       height  = "23"
       bottom  = "3"
       right   = "5">
-        <a:button id="btnClear"
-          skin    = "btn-statusbar-icon" 
-          skinset = "c9statusbar"
-          height  = "23"
-          icon    = "console_clear.png" 
-          submenudir = "up" />
         <a:button id="ddType" 
           skin    = "label"
           style   = "cursor:pointer"
-          margin  = "1 10 4 3"
+          margin  = "1 7 4 3"
           caption = "this.caption != ''"
+          submenudir = "up" />
+        <a:button id="btnClear"
+          margin  = "0 3 0 0"
+          skin    = "btn_console" 
+          skinset = "c9statusbar"
+          class   = "clear"
           submenudir = "up" />
     </a:bar>
     <a:menu id="menu" render="runtime" class="mnuSbPrefs">

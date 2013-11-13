@@ -14,6 +14,7 @@ define(function(require, exports, module) {
         var menus     = imports.menus;
         var commands  = imports.commands;
         var c9console = imports.console;
+        var aceHandle = imports.ace;
         var aceStatus = imports["ace.status"];
         
         var Repl     = require("plugins/c9.ide.ace.repl/repl").Repl;
@@ -30,6 +31,7 @@ define(function(require, exports, module) {
         var emit   = handle.getEmitter();
         
         var replTypes = {}; //Shared across Immediate windows
+        var theme;
         
         handle.on("load", function(){
             handle.addElement(
@@ -171,6 +173,15 @@ define(function(require, exports, module) {
                     ddType.setAttribute("caption", replTypes[type].caption);
                     ddType.dispatchEvent("afterchange");
                 }
+                
+                aceHandle.on("themeChange", function(e){
+                    theme = e.theme;
+                    if (!theme) return;
+                    
+                    btnClear.parentNode.$ext.className = "bar-status "
+                        + (theme.isDark ? "ace_dark" : "");
+                    
+                }, plugin);
                 
                 menu.on("prop.visible", update);
                 update();
