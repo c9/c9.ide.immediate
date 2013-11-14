@@ -69,6 +69,8 @@ require(["lib/architect/architect", "lib/chai/chai"],
         "plugins/c9.ide.editors/pane",
         "plugins/c9.ide.editors/tab",
         "plugins/c9.ide.ace/ace",
+        "plugins/c9.ide.ace.statusbar/statusbar",
+        "plugins/c9.ide.ace.gotoline/gotoline",
         {
             packagePath: "plugins/c9.ide.immediate/immediate",
             staticPrefix : "plugins/c9.ide.layout.classic"

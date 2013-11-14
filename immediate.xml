@@ -1,12 +1,25 @@
 <a:application xmlns:a="http://ajax.org/2005/aml">
-    <a:hbox pack="end" bottom="10" right="10" height="24" align="center" padding="0" zindex="10">
-        <a:button id="btnClear" skin="btn_icon_only" icon="console_clear.png" margin="2 2 0 0" />
-        <a:dropdown id="ddType"
-          skin       = "dropdown-dark-glossy"
-          margin     = "3 0 0 4"
-          maxitems   = "10"
-          autoselect = "true"
-          icon       = "debugger/file_obj.gif">
-        </a:dropdown>
-    </a:hbox>
+    <a:bar id="bar" 
+      skin    = "bar-status" 
+      skinset = "c9statusbar"
+      class   = ""
+      zindex  = "10000"
+      height  = "23"
+      bottom  = "3"
+      right   = "5">
+        <a:button id="ddType" 
+          skin    = "label"
+          style   = "cursor:pointer"
+          margin  = "1 7 4 3"
+          caption = "this.caption != ''"
+          submenudir = "up" />
+        <a:button id="btnClear"
+          margin  = "0 3 0 0"
+          skin    = "btn_console" 
+          skinset = "c9statusbar"
+          class   = "clear"
+          submenudir = "up" />
+    </a:bar>
+    <a:menu id="menu" render="runtime" class="mnuSbPrefs">
+    </a:menu>
 </a:application>

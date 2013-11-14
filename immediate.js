@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     main.consumes = [
-        "editors", "ui", "tabManager", "ace", "menus", "commands",
-        "console"
+        "editors", "ui", "settings", "tabManager", "ace", "menus", "commands",
+        "console", "ace.status"
     ];
     main.provides = ["immediate"];
     return main;
@@ -13,6 +13,8 @@ define(function(require, exports, module) {
         var menus     = imports.menus;
         var commands  = imports.commands;
         var c9console = imports.console;
+        var aceHandle = imports.ace;
+        var aceStatus = imports["ace.status"];
         
         var Repl     = require("plugins/c9.ide.ace.repl/repl").Repl;
         var markup   = require("text!./immediate.xml");
@@ -28,6 +30,7 @@ define(function(require, exports, module) {
         var emit   = handle.getEmitter();
         
         var replTypes = {}; //Shared across Immediate windows
+        var theme;
         
         handle.on("load", function(){
             handle.addElement(
@@ -80,7 +83,7 @@ define(function(require, exports, module) {
             // Insert some CSS
             ui.insertCss(require("text!./style.css"), options.staticPrefix, handle);
         });
-        
+
         //Search through pages
         function search(){
             return !tabs.getTabs().every(function(tab){
@@ -99,14 +102,17 @@ define(function(require, exports, module) {
             var plugin = new Baseclass(true, [], deps);
             // var emit   = plugin.getEmitter();
             
-            var ddType, btnClear, ace;
+            var ddType, btnClear, ace, menu;
             
             plugin.on("draw", function(e){
+                aceStatus.draw();
+                
                 // Create UI elements
                 ui.insertMarkup(e.tab, markup, plugin);
                 
                 ddType    = plugin.getElement("ddType");
                 btnClear  = plugin.getElement("btnClear");
+                menu      = plugin.getElement("menu");
                 
                 ace = plugin.ace;
                 
@@ -122,10 +128,11 @@ define(function(require, exports, module) {
                 
                 ddType.on("afterchange", function(){
                     if (currentDocument)
-                        currentDocument.getSession().changeType(ddType.value);
+                        currentDocument.getSession().changeType(ddType.selectedType);
                 });
                 btnClear.on("click", function(){
                     plugin.clear();
+                    btnClear.blur();
                 });
                 
                 for (var type in replTypes){
@@ -136,14 +143,57 @@ define(function(require, exports, module) {
                 handle.on("addEvaluator", function(e){
                     addType(e.caption, e.id, e.plugin);
                 });
+                
+                menu.on("itemclick", function(e) {
+                    var value = e.relatedNode.getAttribute("value");
+                    ddType.setType(value);
+                });
+                
+                function update(e){
+                    if (e && !e.value)
+                        return;
+                    var items = menu.childNodes;
+                    var value = ddType.selectedType || items[0].value;
+                    var selectedItem
+                    items.forEach(function(item){
+                        var selected = item.value == value ? true :  false;
+                        if (selected) selectedItem = item;
+                        item.setAttribute("selected", selected);
+                    });
+                    
+                    ddType.setType(value);
+                }
+                
+                ddType.setAttribute("submenu", menu);
+                ddType.value = true;
+                ddType.setType = function (type) {
+                    if (type == ddType.selectedType || !replTypes[type])
+                        return;
+                    ddType.selectedType = type;
+                    ddType.setAttribute("caption", replTypes[type].caption);
+                    ddType.dispatchEvent("afterchange");
+                }
+                
+                aceHandle.on("themeChange", function(e){
+                    theme = e.theme;
+                    if (!theme) return;
+                    
+                    btnClear.parentNode.$ext.className = "bar-status "
+                        + (theme.isDark ? "ace_dark" : "");
+                    
+                }, plugin);
+                
+                menu.on("prop.visible", update);
+                update();
             });
             
             /***** Method *****/
             
             function addType(caption, value, plugin){
-                var item = ddType.appendChild(new ui.item({
+                var item = menu.appendChild(new ui.item({
                     caption : caption,
-                    value   : value
+                    value   : value,
+                    type    : "radio"
                 }));
                 
                 plugin.addElement(item);
@@ -198,15 +248,14 @@ define(function(require, exports, module) {
                     });
                 };
                 
-                session.changeType(session.type || ddType.value);
+                session.changeType(session.type || ddType.selectedType);
             });
             plugin.on("documentActivate", function(e){
                 currentDocument = e.doc;
                 var session = e.doc.getSession();
                 
                 if (session.type) {
-                    ddType.setValue(session.type);
-                    ddType.dispatchEvent("afterchange");
+                    ddType.setType(session.type);
                 }
                 
                 if (session.repl)
@@ -226,8 +275,7 @@ define(function(require, exports, module) {
             plugin.on("setState", function(e){
                 if (e.state.type) {
                     e.doc.getSession().type = e.state.type;
-                    ddType.setValue(e.state.type);
-                    ddType.dispatchEvent("afterchange");
+                    ddType.setType(e.state.type);
                 }
             });
             plugin.on("clear", function(){
