@@ -107,6 +107,7 @@ define(function(require, exports, module) {
             
             plugin.on("draw", function(e){
                 aceStatus.draw();
+                
                 // Create UI elements
                 ui.insertMarkup(e.tab, markup, plugin);
                 
