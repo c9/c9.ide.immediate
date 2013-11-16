@@ -154,7 +154,7 @@ define(function(require, exports, module) {
                         return;
                     var items = menu.childNodes;
                     var value = ddType.selectedType || items[0].value;
-                    var selectedItem
+                    var selectedItem;
                     items.forEach(function(item){
                         var selected = item.value == value ? true :  false;
                         if (selected) selectedItem = item;
@@ -172,16 +172,19 @@ define(function(require, exports, module) {
                     ddType.selectedType = type;
                     ddType.setAttribute("caption", replTypes[type].caption);
                     ddType.dispatchEvent("afterchange");
-                }
+                };
                 
-                aceHandle.on("themeChange", function(e){
+                function setTheme(e){
                     theme = e.theme;
                     if (!theme) return;
                     
                     btnClear.parentNode.$ext.className = "bar-status "
                         + (theme.isDark ? "ace_dark" : "");
                     
-                }, plugin);
+                }
+                
+                aceHandle.on("themeChange", setTheme, plugin);
+                setTheme({theme: aceHandle.theme});
                 
                 menu.on("prop.visible", update);
                 update();
