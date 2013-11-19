@@ -436,7 +436,8 @@ define(function(require, exports, module) {
             } catch(e) {
                 try {
                     win.thrown = false;
-                    win.eval("try{window.result = eval('" + expression.replace(/['\n\r\\]/g, "\\$&") 
+                    win.eval("try{window.result = eval('" + expression.replace(/\r/g, "\\r")
+                        .replace(/\n/g, "\\r").replace(/['\\]/g, "\\$&")
                         + "')}catch(e){window.thrown = true; window.result = e}");
                 } catch(e) {
                     win.result = e;
