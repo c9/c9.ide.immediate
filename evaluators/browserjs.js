@@ -40,7 +40,7 @@ define(function(require, exports, module) {
             loaded = true;
             
             iframe = document.body.appendChild(document.createElement("iframe"));
-            iframe.setAttribute("nwdisable");
+            iframe.setAttribute("nwdisable", "nwdisable");
 
             iframe.style.width    = "1px";
             iframe.style.height   = "1px";
