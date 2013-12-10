@@ -165,7 +165,6 @@ define(function(require, exports, module) {
                 }
                 
                 ddType.setAttribute("submenu", menu);
-                ddType.value = true;
                 ddType.setType = function (type) {
                     if (type == ddType.selectedType || !replTypes[type])
                         return;
