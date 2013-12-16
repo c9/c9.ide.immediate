@@ -66,6 +66,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
             packagePath : "plugins/c9.ide.editors/tabmanager",
             testing     : 2
         },
+        "plugins/c9.ide.ui/focus",
         "plugins/c9.ide.editors/pane",
         "plugins/c9.ide.editors/tab",
         "plugins/c9.ide.ace/ace",
