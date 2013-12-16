@@ -98,7 +98,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
             provides : [
                 "menus", "layout", "watcher", 
                 "save", "fs", "preferences", "clipboard",
-                "auth.bootstrap", "Dialog", "dialog.alert"
+                "auth.bootstrap", "info", "Dialog", "dialog.alert"
             ],
             setup    : expect.html.mocked,
             show: function() {
