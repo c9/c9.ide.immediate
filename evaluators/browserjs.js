@@ -179,7 +179,7 @@ define(function(require, exports, module) {
                 insert(html, "<div class='stack'>" + stack + "</div>");
             }
             else if (object instanceof win.Element) {
-                if (!html.parentNode.innerText.match(/HTML\w*Element/)) {
+                if (!html.parentNode.textContent.match(/HTML\w*Element/)) {
                     var children = object.childNodes;
                     for (var i = 0; i < children.length; i++) {
                         renderType(children[i], html, false, 2);
