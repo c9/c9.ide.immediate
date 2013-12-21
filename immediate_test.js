@@ -145,10 +145,6 @@ require(["lib/architect/architect", "lib/chai/chai"],
       
                 document.body.style.marginBottom = "150px";
                 
-               // for (var name in runners) {
-               //     immediate.addType(name.uCaseFirst(), name);
-               // }
-                
                 done();
             });
             
