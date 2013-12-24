@@ -160,10 +160,10 @@ define(function(require, exports, module) {
         function parseChildren(object, html){
             if (object instanceof win.Array) {
                 if (object.length < 101) {
-                    object.forEach(function(item, i){
-                        renderType(item, html, 2, false, i);
-                        insert(html, "<br />");
-                    });
+                    // object.forEach(function(item, i){
+                    //     renderType(item, html, 2, false, i);
+                    //     insert(html, "<br />");
+                    // });
                 }
                 else {
                     
@@ -254,20 +254,23 @@ define(function(require, exports, module) {
                         var preview = caption.appendChild(document.createElement("span"));
                         preview.className = "preview";
                         
+                        var found = false;
                         insert(preview, "[", name);
                         object.every(function(item, i){
                             renderType(item, preview, false, true);
-                            if (i < object.length - 2)
+                            if (i < object.length - 1)
                                 insert(preview, ", ");
-                            
+                            found = true;
                             return i < 100;
                         });
                         
-                        var props = Object.getOwnPropertyNames(object);
+                        var props = Object.getOwnPropertyNames(object).filter(function(n){
+                            return parseInt(n) != n;
+                        });
                         var count = Math.min(Math.min(props.length, 5), 
                             Math.max(0, 100 - object.length));
                         for (var i = 0; i < count; i++) {
-                            insert(preview, (i !== 0 ? ", " : "") + props[i] + ": ");
+                            insert(preview, (found || i !== 0 ? ", " : "") + props[i] + ": ");
                             renderType(object[props[i]], preview, false, 2);
                         }
                         if (props.length > count)
