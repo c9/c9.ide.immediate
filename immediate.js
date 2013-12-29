@@ -250,6 +250,8 @@ define(function(require, exports, module) {
                     });
                 };
                 
+                doc.value = "";
+                
                 session.changeType(session.type || ddType.selectedType);
             });
             plugin.on("documentActivate", function(e){
