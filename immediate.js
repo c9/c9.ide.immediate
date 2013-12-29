@@ -126,6 +126,9 @@ define(function(require, exports, module) {
                 
                 e.htmlNode.className += " immediate";
                 
+                // Allow Selection (APF)
+                e.tab.textselect = true;
+                
                 ddType.on("afterchange", function(){
                     if (currentDocument)
                         currentDocument.getSession().changeType(ddType.selectedType);
