@@ -205,7 +205,7 @@ define(function(require, exports, module) {
             }
             
             function setActiveEvaluator(value){
-                ddType.setAttribute("value", value);
+                ddType.setType(value);
             }
             
             // Set the tab in loading state - later this could be the output block
