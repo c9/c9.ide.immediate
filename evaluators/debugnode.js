@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     main.consumes = [
-        "immediate", "settings", "debugger", "Evaluator", "callstack"
+        "immediate", "settings", "debugger", "Evaluator", "callstack", "ui"
     ];
     main.provides = ["immediate.debugnode"];
     return main;
@@ -11,6 +11,7 @@ define(function(require, exports, module) {
         var debug     = imports.debugger;
         var immediate = imports.immediate;
         var callstack = imports.callstack;
+        var ui        = imports.ui;
         
         /***** Initialization *****/
         
@@ -132,6 +133,9 @@ define(function(require, exports, module) {
             
             var container;
             treeitem.addEventListener("click", function(e){
+                if (container && ui.isChildOf(container, e.target, true))
+                    return;
+                    
                 e.stopPropagation();
                 
                 if (!container) {

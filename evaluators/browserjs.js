@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    main.consumes = ["immediate", "settings", "Evaluator"];
+    main.consumes = ["immediate", "settings", "Evaluator", "ui"];
     main.provides = ["immediate.browserjs"];
     return main;
     
@@ -21,6 +21,7 @@ define(function(require, exports, module) {
         var Evaluator = imports.Evaluator;
         var settings  = imports.settings;
         var immediate = imports.immediate;
+        var ui        = imports.ui;
         
         /***** Initialization *****/
         
@@ -132,6 +133,9 @@ define(function(require, exports, module) {
             
             var container;
             treeitem.addEventListener("click", function(e){
+                if (container && ui.isChildOf(container, e.target, true))
+                    return;
+                
                 e.stopPropagation();
                 
                 if (!container) {
