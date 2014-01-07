@@ -208,6 +208,10 @@ define(function(require, exports, module) {
                 ddType.setType(value);
             }
             
+            function getActiveEvaluator() {
+                return ddType.selectedType;
+            }
+            
             // Set the tab in loading state - later this could be the output block
             // currentDocument.tab.className.add("loading");
             // settings.save();
@@ -313,7 +317,12 @@ define(function(require, exports, module) {
                 /**
                  * 
                  */
-                setActiveEvaluator : setActiveEvaluator
+                setActiveEvaluator : setActiveEvaluator,
+                
+                /**
+                 *
+                 */
+                getActiveEvaluator : getActiveEvaluator
             });
             
             plugin.load("immediate" + counter++);
