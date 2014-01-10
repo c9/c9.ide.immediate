@@ -61,22 +61,27 @@ define(function(require, exports, module) {
             commands.addCommand({
                 name    : "showimmediate",
                 group   : "Panels",
-                exec    : function (editor) {
+                exec    : function (editor, args) {
                     // Search for the output pane
-                    if (search()) return;
+                    if (search(done)) return;
                     
                     // If not found show the console
                     c9console.show();
                     
                     // Search again
-                    if (search()) return;
+                    if (search(done)) return;
                     
                     // Else open the output panel in the console
                     tabs.open({
                         editorType : "immediate", 
                         active     : true,
                         pane        : c9console.getPanes()[0],
-                    }, function(){});
+                    }, done);
+                    
+                    function done(err, tab) {
+                        if (args && args.evaluator)
+                            tab.editor.setActiveEvaluator(args.evaluator);
+                    }
                 }
             }, handle);
             
@@ -85,10 +90,11 @@ define(function(require, exports, module) {
         });
 
         //Search through pages
-        function search(){
+        function search(cb){
             return !tabs.getTabs().every(function(tab){
                 if (tab.editorType == "immediate") {
                     tabs.focusTab(tab);
+                    if (cb) cb(null, tab);
                     return false;
                 }
                 return true;
