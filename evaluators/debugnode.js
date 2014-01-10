@@ -19,7 +19,7 @@ define(function(require, exports, module) {
             caption : "Debugger",
             id      : "debugger",
             mode    : "ace/mode/javascript", // @todo make this variable: repl.session.setMode
-            message : "Welcome to the debugger REPL."
+            message : "Welcome to the REPL."
         });
         // var emit   = plugin.getEmitter();
         

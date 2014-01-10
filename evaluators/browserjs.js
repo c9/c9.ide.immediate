@@ -29,7 +29,7 @@ define(function(require, exports, module) {
             caption : "Javascript (browser)",
             id      : "jsbrowser",
             mode    : "ace/mode/javascript",
-            message : "Welcome to the Javascript (browser) REPL."
+            message : "Welcome to the REPL."
         });
         // var emit   = plugin.getEmitter();
         
