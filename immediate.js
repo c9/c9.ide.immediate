@@ -241,7 +241,7 @@ define(function(require, exports, module) {
                 
                 if (session.repl) return;
                 
-                session.changeType = function(type){
+                session.changeType = function(type, noMessage){
                     handle.findEvaluator(type, function(type, evaluator){
                         session.type = type;
                         
@@ -256,16 +256,18 @@ define(function(require, exports, module) {
                               && currentDocument.getSession() == session)
                                 session.repl.attach(ace);
                         }
-                        else {
-                            session.repl.clear();
+                        
+                        session.repl.clear();
+                        
+                        if (!noMessage) {
                             var cell = session.repl.insertCell(
-                                { row: 0, column: 0 }, { type: "text" }, true);
+                                { row: 0, column: 0 }, { type: "comment" }, true);
                             cell.setValue(evaluator.message + "\n");
-                            
-                            session.repl.ensureLastInputCell();
-                            session.repl.setEvaluator(evaluator);
-                            session.repl.session.setMode(evaluator.mode);
                         }
+                        
+                        session.repl.ensureLastInputCell();
+                        session.repl.setEvaluator(evaluator);
+                        session.repl.session.setMode(evaluator.mode);
                         
                         doc.tooltip = 
                         doc.title   = "Immediate (" + evaluator.caption + ")";
@@ -306,6 +308,11 @@ define(function(require, exports, module) {
                 }
             });
             plugin.on("clear", function(){
+                if (currentDocument) {
+                    var session = currentDocument.getSession();
+                    session.changeType(session.type, true);
+                    plugin.focus();
+                }
             });
             plugin.on("focus", function(){
             });

@@ -305,7 +305,7 @@ define(function(require, exports, module) {
                 insertTree(html, caption, object, parseChildren);
             }
             // HTML/XML Element
-            else if (object instanceof win.Node && log === false) {
+            else if (object instanceof win.Node && log === false && object.nodeType != 9) {
                 // Text Node
                 if (object.nodeType == 3) {
                     insert(html, "<span class='textnode'>" 
