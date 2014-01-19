@@ -31,7 +31,7 @@ define(function(require, exports, module) {
             mode    : "ace/mode/javascript",
             message : "Welcome to the Javascript REPL. This REPL allows you to "
                 + "test any single or multi line code in\na browser based "
-                + "javascript environment (iframe). It operates very similar to "
+                + "javascript environment (iframe). It operates similar to "
                 + "your browser console."
         });
         // var emit   = plugin.getEmitter();
