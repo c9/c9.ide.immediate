@@ -181,6 +181,11 @@ define(function(require, module, exports) {
                  * @property {String} message
                  */
                 get message(){ return message; },
+                /**
+                 * The caption of this evaluator
+                 * @property {String} caption
+                 */
+                get caption(){ return caption; },
                 
                 _events : [
                     /**

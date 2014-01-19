@@ -30,7 +30,7 @@ define(function(require, exports, module) {
         var emit   = handle.getEmitter();
         
         var replTypes = {}; //Shared across Immediate windows
-        var theme;
+        var theme, defaultEvaluator;
         
         handle.on("load", function(){
             handle.addElement(
@@ -188,7 +188,6 @@ define(function(require, exports, module) {
                     
                     btnClear.parentNode.$ext.className = "bar-status "
                         + (theme.isDark ? "ace_dark" : "");
-                    
                 }
                 
                 aceHandle.on("themeChange", setTheme, plugin);
@@ -237,7 +236,8 @@ define(function(require, exports, module) {
                         doc.undoManager.bookmark();
                 });
                 
-                doc.title = "Immediate";
+                doc.tooltip = 
+                doc.title   = "Immediate";
                 
                 if (session.repl) return;
                 
@@ -257,15 +257,24 @@ define(function(require, exports, module) {
                                 session.repl.attach(ace);
                         }
                         else {
+                            session.repl.clear();
+                            var cell = session.repl.insertCell(
+                                { row: 0, column: 0 }, { type: "text" }, true);
+                            cell.setValue(evaluator.message + "\n");
+                            
+                            session.repl.ensureLastInputCell();
                             session.repl.setEvaluator(evaluator);
                             session.repl.session.setMode(evaluator.mode);
                         }
+                        
+                        doc.tooltip = 
+                        doc.title   = "Immediate (" + evaluator.caption + ")";
                     });
                 };
                 
                 doc.value = "";
                 
-                session.changeType(session.type || ddType.selectedType);
+                session.changeType(session.type || defaultEvaluator || ddType.selectedType);
             });
             plugin.on("documentActivate", function(e){
                 currentDocument = e.doc;
@@ -287,12 +296,13 @@ define(function(require, exports, module) {
             });
             plugin.on("getState", function(e){
                 // @todo at one for each value container
-                e.state.type      = e.doc.getSession().type;
+                e.state.type = e.doc.getSession().type;
             });
             plugin.on("setState", function(e){
                 if (e.state.type) {
                     e.doc.getSession().type = e.state.type;
-                    ddType.setType(e.state.type);
+                    if (e.doc == currentDocument)
+                        ddType.setType(e.state.type);
                 }
             });
             plugin.on("clear", function(){
@@ -389,6 +399,9 @@ define(function(require, exports, module) {
          * @singleton
          */
         handle.freezePublicAPI({
+            get defaultEvaluator(){ return defaultEvaluator; },
+            set defaultEvaluator(value){ defaultEvaluator = value; },
+            
             _events : [
                 /**
                  * Fires when an evaluator is added.

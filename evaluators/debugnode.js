@@ -19,7 +19,10 @@ define(function(require, exports, module) {
             caption : "Debugger",
             id      : "debugger",
             mode    : "ace/mode/javascript", // @todo make this variable: repl.session.setMode
-            message : "Welcome to the REPL."
+            message : "Welcome to the debugger inspector. You can inspect "
+                + "any process that the debugger is attached to. Code \nwill be "
+                + "executed in the global context unless on "
+                + "a breakpoint, then code is executed in the current frame."
         });
         // var emit   = plugin.getEmitter();
         
@@ -35,9 +38,12 @@ define(function(require, exports, module) {
                 dbg = e.implementation;
                 if (dbg.attachLog)
                     initLog(dbg.attachLog());
+                
+                immediate.defaultEvaluator = "debugger";
             });
             debug.on("detach", function(e){
                 dbg = null;
+                immediate.defaultEvaluator = null;
             });
             debug.on("stateChange", function(e){
                 plugin[e.action]();
