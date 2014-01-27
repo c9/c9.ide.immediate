@@ -326,7 +326,7 @@ define(function(require, exports, module) {
             /***** Register and define API *****/
             
             /**
-             * Immediate Pane for Cloud9 IDE
+             * Immediate Pane for Cloud9
              * @class immediate.Immediate
              * @extends Editor
              */
