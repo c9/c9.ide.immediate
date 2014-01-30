@@ -464,6 +464,11 @@ define(function(require, exports, module) {
                             if (results.indexOf(prop) === -1)
                                 results.push(prop);
                         });
+                        props = Object.keys(obj);
+                        props.forEach(function(prop){
+                            if (results.indexOf(prop) === -1)
+                                results.push(prop);
+                        });
                     } while ((obj = Object.getPrototypeOf(obj)));
                     return results;
                 }.toString() + ")(" + context + ")");
