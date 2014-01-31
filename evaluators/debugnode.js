@@ -449,25 +449,6 @@ define(function(require, exports, module) {
         };
         
         function evaluate(expression, cell, cb) {
-            // Ignore heroku command if typed
-            // str = str.replace(/^heroku\s+/, "");
-            
-            // cell.addWidget({rowCount: 6, html:"<img src='http://martin.bravenboer.name/logo-trans-85.png'>"})
-            // cell.addWidget({rowCount: 8, el:editor.container, editor: editor})
-            
-            // var session = cell.session;
-            // var args    = str.trim().split(" ");
-            // if (evaluator.name && str.indexOf("-a") == -1)
-            //     args.push("-a", evaluator.name);
-            
-            // cb("Authorization Required");
-            // cell.insert(data);
-            
-            // //cell.addWidget({rowCount: 6, html:"<span class='error'>" + data + "</span>"});
-            // cell.insert(pos, "Error: " + data);
-            
-            // cb(buffer);
-            
             lastCell = cell;
             
             if (cell.html)
@@ -487,8 +468,10 @@ define(function(require, exports, module) {
         function evaluateHeadless(expression, callback) {
             if (!callback) return;
             
+            console.warn("DEBUG: (evaluate)", expression);
             dbg && dbg.evaluate(expression, callstack.activeFrame, 
               !callstack.activeFrame, false, function(err, variable){
+            console.warn("DEBUG: (evaluate-receive)", expression, err);
                 if (err)
                     return callback({ "$$error" : err, type: err });
                 
@@ -504,8 +487,47 @@ define(function(require, exports, module) {
             });
         }
         
+        function addVariables(list, node){
+            node.variables.forEach(function(n){
+                list.push(n.name);
+            });
+        }
+        
         function getAllProperties(context, callback){
+            // Return all properties of the current context
+            if (context == -1) {
+                var frame = callstack.activeFrame;
+                var vars  = [];
+                var count = 0;
+                if (frame) {
+                    addVariables(vars, frame);
+                    
+                    frame.scopes.forEach(function(scope){
+                        if (scope.status == "loaded")
+                            addVariables(vars, scope);
+                        else {
+                            count++;
+                            dbg.getScope(frame, scope, function(err){
+                                if (!err)
+                                    addVariables(vars, scope);
+                                
+                                if (--count === 0)
+                                    callback(null, vars);
+                            });
+                        }
+                    });
+                    
+                    return;
+                }
+                else {
+                    context = "global";
+                }
+            }
+            
+            console.warn("DEBUG: (properties)", context);
             evaluateHeadless(context, function(variable){
+                console.warn("DEBUG: (properties-received)", variable);
+                
                 if (variable["$$error"])
                     return callback(variable["$$error"]);
                 if (!variable.properties)
@@ -519,7 +541,9 @@ define(function(require, exports, module) {
                     if (variable.prototype) {
                         if (!dbg) return callback(new Error("disconnected"));
                         
+                        console.warn("DEBUG: (properties-properties)", variable);
                         dbg.getProperties(variable.prototype, function(err, props){
+                        console.warn("DEBUG: (properties-properties-received)", variable, err);
                             if (err) return callback(err);
                             
                             props.forEach(function(prop){
