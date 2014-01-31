@@ -244,8 +244,11 @@ define(function(require, exports, module) {
             }
             else if (type == "string") {
                 if (!log || log == 2) {
-                    value = value.slice(1, -1)
-                        .replace(/</g, "&lt;");
+                    value = JSON.parse(value)
+                        .replace(/</g, "&lt;")
+                        .replace(/\t/g, "    ")
+                        .replace(/ /g, "&nbsp;")
+                        .replace(/\n/g, "<br />");
                     var str   = "\"<span class='string'>" + value + "</span>\"";
                     if (name && object.length > 100) {
                         var event = "this.style.display = \"none\";\

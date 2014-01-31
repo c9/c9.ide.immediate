@@ -213,8 +213,9 @@ define(function(require, exports, module) {
             }
             else if (type == "string") {
                 if (!log || log == 2) {
-                    var value = String(object) //JSON.stringify(object).slice(1, -1)
+                    var value = String(object)
                         .replace(/</g, "&lt;")
+                        .replace(/\t/g, "    ")
                         .replace(/ /g, "&nbsp;")
                         .replace(/\n/g, "<br />");
                     var str   = "\"<span class='string'>" + value + "</span>\"";
