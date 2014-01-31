@@ -279,7 +279,7 @@ define(function(require, exports, module) {
             }
             else if (!log && type == "regexp") {
                 insert(html, "<span class='regexp'>" 
-                    + object.name + "</span>", name);
+                    + object.value + "</span>", name);
             }
             else if (value == "[Array]") {
                 if (short) {
