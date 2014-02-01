@@ -43,7 +43,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
         "plugins/c9.ide.ui/lib_apf",
         {
             packagePath : "plugins/c9.core/settings",
-            settings : "<settings><state><console>" + JSON.stringify({
+            settings : { state: { console: {
                 type  : "pane", 
                 nodes : [
                     {
@@ -52,7 +52,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
                         active : "true"
                     }
                 ]
-            }) + "</console></state></settings>"
+            } } }
         },
         "plugins/c9.core/api.js",
         {
