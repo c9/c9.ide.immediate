@@ -468,10 +468,13 @@ define(function(require, exports, module) {
         function evaluateHeadless(expression, callback) {
             if (!callback) return;
             
-            console.warn("DEBUG: (evaluate)", expression);
-            dbg && dbg.evaluate(expression, callstack.activeFrame, 
+            if (!dbg) {
+                var err = new Error("Debug Session is not running");
+                return callback({ "$$error" : err, type: err });
+            }
+            
+            dbg.evaluate(expression, callstack.activeFrame, 
               !callstack.activeFrame, false, function(err, variable){
-            console.warn("DEBUG: (evaluate-receive)", expression, err);
                 if (err)
                     return callback({ "$$error" : err, type: err });
                 
