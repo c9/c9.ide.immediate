@@ -206,7 +206,7 @@ define(function(require, exports, module) {
             //     }
             // }
             
-            if (!object.properties) {
+            if (!object.properties && dbg) {
                 dbg.getProperties(object, function(err, properties){
                     // if (properties && properties.length)
                     parseChildren(object, html, callback)
