@@ -39,8 +39,6 @@ define(function(require, exports, module) {
                 if (dbg.attachLog)
                     initLog(dbg.attachLog());
                 
-                // dbg.on("stateChange", function(){ debugger; })
-                
                 immediate.defaultEvaluator = "debugger";
             });
             debug.on("detach", function(e){
