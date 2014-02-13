@@ -298,11 +298,22 @@ define(function(require, exports, module) {
             });
             plugin.on("getState", function(e){
                 // @todo at one for each value container
-                e.state.type = e.doc.getSession().type;
+                var session = e.doc.getSession();
+                e.state.type = session.type;
+                var data = session.repl.history._data;
+                var pos = session.repl.history.position;
+                if (data.length > 1000)
+                    data = data.slice(-500);
+                e.state.history = data;
+                e.state.pos = pos;
             });
             plugin.on("setState", function(e){
                 if (e.state.type) {
-                    e.doc.getSession().type = e.state.type;
+                    var session = e.doc.getSession();
+                    session.type = e.state.type;
+                    session.repl.history._data = e.state.history || [];
+                    if (typeof e.state.pos === "number")
+                        session.repl.history.position = e.state.pos;
                     if (e.doc == currentDocument)
                         ddType.setType(e.state.type);
                 }
