@@ -422,11 +422,13 @@ define(function(require, exports, module) {
                         props = object.properties || [];
                         count = 0;
                         for (var i = 0; count < 5 && i < props.length; i++) {
-                            if ((props[i].name || "").indexOf("function") === 0)
+                            var propName = props[i].name;
+                            // for buffers propName is a number
+                            if (typeof propName == "string" && propName.indexOf("function") === 0)
                                 continue;
 
                             insert(preview, (i !== 0 ? ", " : ""));
-                            insert(preview, "", props[i].name);
+                            insert(preview, "", propName);
                             renderType(props[i], preview, 2, true);
                             count++;
                         }
