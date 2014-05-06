@@ -1,4 +1,4 @@
-/*global describe it before after  =*/
+/*global describe it before after = */
 
 "use client";
 
@@ -6,7 +6,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
   function (architect, chai, baseProc) {
     var expect = chai.expect;
     
-    var runners  = {
+    var runners = {
         "node" : {
             "caption" : "Node.js (current)",
             "cmd": ["node", "$file"],
@@ -26,14 +26,14 @@ require(["lib/architect/architect", "lib/chai/chai"],
     
     expect.setupArchitectTest([
         {
-            packagePath : "plugins/c9.core/c9",
-            workspaceId : "ubuntu/ip-10-35-77-180",
-            startdate   : new Date(),
-            debug       : true,
-            hosted      : true,
-            local       : false,
-            hostname    : "dev.javruben.c9.io",
-            davPrefix   : "/"
+            packagePath: "plugins/c9.core/c9",
+            workspaceId: "ubuntu/ip-10-35-77-180",
+            startdate: new Date(),
+            debug: true,
+            hosted: true,
+            local: false,
+            hostname: "dev.javruben.c9.io",
+            davPrefix: "/"
         },
         
         "plugins/c9.core/ext",
@@ -42,30 +42,30 @@ require(["lib/architect/architect", "lib/chai/chai"],
         "plugins/c9.ide.ui/anims",
         "plugins/c9.ide.ui/lib_apf",
         {
-            packagePath : "plugins/c9.core/settings",
-            settings : { state: { console: {
-                type  : "pane", 
-                nodes : [
+            packagePath: "plugins/c9.core/settings",
+            settings: { state: { console: {
+                type: "pane", 
+                nodes: [
                     {
-                        type : "tab",
-                        editorType : "immediate",
-                        active : "true"
+                        type: "tab",
+                        editorType: "immediate",
+                        active: "true"
                     }
                 ]
             } } }
         },
         "plugins/c9.core/api.js",
         {
-            packagePath  : "plugins/c9.ide.ui/ui",
-            staticPrefix : "plugins/c9.ide.ui"
+            packagePath: "plugins/c9.ide.ui/ui",
+            staticPrefix: "plugins/c9.ide.ui"
         },
         "plugins/c9.ide.editors/document",
         "plugins/c9.ide.editors/undomanager",
         "plugins/c9.ide.editors/editors",
         "plugins/c9.ide.editors/editor",
         {
-            packagePath : "plugins/c9.ide.editors/tabmanager",
-            testing     : 2
+            packagePath: "plugins/c9.ide.editors/tabmanager",
+            testing: 2
         },
         "plugins/c9.ide.ui/focus",
         "plugins/c9.ide.editors/pane",
@@ -75,7 +75,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
         "plugins/c9.ide.ace.gotoline/gotoline",
         {
             packagePath: "plugins/c9.ide.immediate/immediate",
-            staticPrefix : "plugins/c9.ide.layout.classic"
+            staticPrefix: "plugins/c9.ide.layout.classic"
         },
         "plugins/c9.ide.immediate/evaluator",
         "plugins/c9.ide.immediate/evaluators/browserjs",
@@ -87,43 +87,43 @@ require(["lib/architect/architect", "lib/chai/chai"],
         "plugins/c9.ide.auth/auth",
         "plugins/c9.ide.keys/commands",
         {
-            packagePath : "plugins/c9.ide.run/run",
-            testing     : true,
-            base        : baseProc,
-            runners     : runners
+            packagePath: "plugins/c9.ide.run/run",
+            testing: true,
+            base: baseProc,
+            runners: runners
         },
         "plugins/c9.ide.ui/menus.js",
         
         // Mock plugins
         {
-            consumes : ["apf", "ui", "Plugin"],
-            provides : [
+            consumes: ["apf", "ui", "Plugin"],
+            provides: [
                 "menus", "layout", "watcher", 
                 "save", "fs", "preferences", "clipboard",
                 "auth.bootstrap", "info", "dialog.alert", "dialog.error"
             ],
-            setup    : expect.html.mocked,
+            setup: expect.html.mocked,
             show: function() {
                 alert(arguments);
             }
         },
         {
-            consumes : ["immediate", "tabManager"],
-            provides : [],
-            setup    : main
+            consumes: ["immediate", "tabManager"],
+            provides: [],
+            setup: main
         }
     ], architect);
     
     function main(options, imports, register) {
         var immediate = imports.immediate;
-        var tabs      = imports.tabManager;
+        var tabs = imports.tabManager;
         
-        expect.html.setConstructor(function(tab){
+        expect.html.setConstructor(function(tab) {
             if (typeof tab == "object")
                 return tab.pane.aml.getPage("editor::" + tab.editorType).$ext;
         });
         
-        function countEvents(count, expected, done){
+        function countEvents(count, expected, done) {
             if (count == expected) 
                 done();
             else
@@ -132,7 +132,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
         }
         
         describe('immediate', function() {
-            before(function(done){
+            before(function(done) {
                 apf.config.setProperty("allow-select", false);
                 apf.config.setProperty("allow-blur", false);
 
@@ -157,7 +157,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
                 });
             });
             
-            // after(function(done){
+            // after(function(done) {
             //     tabs.unload();
             //     bar.parentNode.removeChild(bar);
             //     

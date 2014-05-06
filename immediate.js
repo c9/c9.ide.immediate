@@ -7,19 +7,19 @@ define(function(require, exports, module) {
     return main;
 
     function main(options, imports, register) {
-        var editors   = imports.editors;
-        var tabs      = imports.tabManager;
-        var ui        = imports.ui;
-        var menus     = imports.menus;
-        var commands  = imports.commands;
+        var editors = imports.editors;
+        var tabs = imports.tabManager;
+        var ui = imports.ui;
+        var menus = imports.menus;
+        var commands = imports.commands;
         var c9console = imports.console;
         var aceHandle = imports.ace;
         var aceStatus = imports["ace.status"];
         
-        var Repl     = require("plugins/c9.ide.ace.repl/repl").Repl;
-        var markup   = require("text!./immediate.xml");
+        var Repl = require("plugins/c9.ide.ace.repl/repl").Repl;
+        var markup = require("text!./immediate.xml");
         
-        var counter  = 0;
+        var counter = 0;
         
         /***** Initialization *****/
         
@@ -27,7 +27,7 @@ define(function(require, exports, module) {
         
         var handle = editors.register("immediate", "Immediate Window", 
                                       Immediate, extensions);
-        var emit   = handle.getEmitter();
+        var emit = handle.getEmitter();
         
         var replTypes = {}; //Shared across Immediate windows
         var theme, defaultEvaluator;
@@ -36,12 +36,12 @@ define(function(require, exports, module) {
             handle.addElement(
                 tabs.getElement("mnuEditors").appendChild(
                     new ui.item({
-                        caption : "New Immediate Window",
-                        onclick : function(e){
+                        caption: "New Immediate Window",
+                        onclick: function(e) {
                             tabs.open({
-                                active     : true,
-                                pane       : this.parentNode.pane,
-                                editorType : "immediate"
+                                active: true,
+                                pane: this.parentNode.pane,
+                                editorType: "immediate"
                             }, function(){});
                         }
                     })
@@ -49,19 +49,19 @@ define(function(require, exports, module) {
             );
 
             menus.addItemByPath("Window/New Immediate Window", new ui.item({
-                onclick : function(){
+                onclick: function(){
                     tabs.open({
-                        active     : true,
-                        pane       : this.parentNode.pane,
-                        editorType : "immediate"
+                        active: true,
+                        pane: this.parentNode.pane,
+                        editorType: "immediate"
                     }, function(){});
                 }
             }), 31, handle);
             
             commands.addCommand({
-                name    : "showimmediate",
-                group   : "Panels",
-                exec    : function (editor, args) {
+                name: "showimmediate",
+                group: "Panels",
+                exec: function (editor, args) {
                     // Search for the output pane
                     if (search(done)) return;
                     
@@ -73,9 +73,9 @@ define(function(require, exports, module) {
                     
                     // Else open the output panel in the console
                     tabs.open({
-                        editorType : "immediate", 
-                        active     : true,
-                        pane        : c9console.getPanes()[0],
+                        editorType: "immediate", 
+                        active: true,
+                        pane: c9console.getPanes()[0],
                     }, done);
                     
                     function done(err, tab) {
@@ -90,8 +90,8 @@ define(function(require, exports, module) {
         });
 
         //Search through pages
-        function search(cb){
-            return !tabs.getTabs().every(function(tab){
+        function search(cb) {
+            return !tabs.getTabs().every(function(tab) {
                 if (tab.editorType == "immediate") {
                     tabs.focusTab(tab);
                     if (cb) cb(null, tab);
@@ -104,21 +104,21 @@ define(function(require, exports, module) {
         function Immediate(){
             var Baseclass = editors.findEditor("ace");
             
-            var deps   = main.consumes.splice(0, main.consumes.length - 1);
+            var deps = main.consumes.splice(0, main.consumes.length - 1);
             var plugin = new Baseclass(true, [], deps);
-            // var emit   = plugin.getEmitter();
+            // var emit = plugin.getEmitter();
             
             var ddType, btnClear, ace, menu;
             
-            plugin.on("draw", function(e){
+            plugin.on("draw", function(e) {
                 aceStatus.draw();
                 
                 // Create UI elements
                 ui.insertMarkup(e.tab, markup, plugin);
                 
-                ddType    = plugin.getElement("ddType");
-                btnClear  = plugin.getElement("btnClear");
-                menu      = plugin.getElement("menu");
+                ddType = plugin.getElement("ddType");
+                btnClear = plugin.getElement("btnClear");
+                menu = plugin.getElement("menu");
                 
                 ace = plugin.ace;
                 
@@ -144,12 +144,12 @@ define(function(require, exports, module) {
                     btnClear.blur();
                 });
                 
-                for (var type in replTypes){
+                for (var type in replTypes) {
                     var t = replTypes[type];
                     addType(t.caption, type, t.plugin);
                 }
                 
-                handle.on("addEvaluator", function(e){
+                handle.on("addEvaluator", function(e) {
                     addType(e.caption, e.id, e.plugin);
                 });
                 
@@ -158,13 +158,13 @@ define(function(require, exports, module) {
                     ddType.setType(value);
                 });
                 
-                function update(e){
+                function update(e) {
                     if (e && !e.value)
                         return;
                     var items = menu.childNodes;
                     var value = ddType.selectedType || items[0].value;
                     var selectedItem;
-                    items.forEach(function(item){
+                    items.forEach(function(item) {
                         var selected = item.value == value ? true :  false;
                         if (selected) selectedItem = item;
                         item.setAttribute("selected", selected);
@@ -182,7 +182,7 @@ define(function(require, exports, module) {
                     ddType.dispatchEvent("afterchange");
                 };
                 
-                function setTheme(e){
+                function setTheme(e) {
                     theme = e.theme;
                     if (!theme) return;
                     
@@ -199,17 +199,17 @@ define(function(require, exports, module) {
             
             /***** Method *****/
             
-            function addType(caption, value, plugin){
+            function addType(caption, value, plugin) {
                 var item = menu.appendChild(new ui.item({
-                    caption : caption,
-                    value   : value,
-                    type    : "radio"
+                    caption: caption,
+                    value: value,
+                    type: "radio"
                 }));
                 
                 plugin.addElement(item);
             }
             
-            function setActiveEvaluator(value){
+            function setActiveEvaluator(value) {
                 ddType.setType(value);
             }
             
@@ -227,29 +227,29 @@ define(function(require, exports, module) {
             });
             
             var currentDocument;
-            plugin.on("documentLoad", function(e){
-                var doc     = e.doc;
+            plugin.on("documentLoad", function(e) {
+                var doc = e.doc;
                 var session = doc.getSession();
                 
-                doc.undoManager.on("change", function(e){
+                doc.undoManager.on("change", function(e) {
                     if (!doc.undoManager.isAtBookmark())
                         doc.undoManager.bookmark();
                 });
                 
                 doc.tooltip = 
-                doc.title   = "Immediate";
+                doc.title = "Immediate";
                 
                 if (session.repl) return;
                 
-                session.changeType = function(type, noMessage){
-                    handle.findEvaluator(type, function(type, evaluator){
+                session.changeType = function(type, noMessage) {
+                    handle.findEvaluator(type, function(type, evaluator) {
                         session.type = type;
                         
                         if (!session.repl) {
                             session.repl = new Repl(session.session, {
-                                mode      : evaluator.mode,
-                                evaluator : evaluator,
-                                message   : evaluator.message
+                                mode: evaluator.mode,
+                                evaluator: evaluator,
+                                message: evaluator.message
                             });
                             
                             if (currentDocument
@@ -270,7 +270,7 @@ define(function(require, exports, module) {
                         session.repl.session.setMode(evaluator.mode);
                         
                         doc.tooltip = 
-                        doc.title   = "Immediate (" + evaluator.caption + ")";
+                        doc.title = "Immediate (" + evaluator.caption + ")";
                     });
                 };
                 
@@ -278,7 +278,7 @@ define(function(require, exports, module) {
                 
                 session.changeType(session.type || defaultEvaluator || ddType.selectedType);
             });
-            plugin.on("documentActivate", function(e){
+            plugin.on("documentActivate", function(e) {
                 currentDocument = e.doc;
                 var session = e.doc.getSession();
                 
@@ -289,14 +289,14 @@ define(function(require, exports, module) {
                 if (session.repl)
                     session.repl.attach(ace);
             });
-            plugin.on("documentUnload", function(e){
+            plugin.on("documentUnload", function(e) {
                 var session = e.doc.getSession();
                 if (session.repl)
                     session.repl.detach();
                 // TODO: this breaks moving repl between splits
                 // delete session.repl;
             });
-            plugin.on("getState", function(e){
+            plugin.on("getState", function(e) {
                 // @todo at one for each value container
                 var session = e.doc.getSession();
                 e.state.type = session.type;
@@ -307,7 +307,7 @@ define(function(require, exports, module) {
                 e.state.history = data;
                 e.state.pos = pos;
             });
-            plugin.on("setState", function(e){
+            plugin.on("setState", function(e) {
                 if (e.state.type) {
                     var session = e.doc.getSession();
                     session.type = e.state.type;
@@ -351,12 +351,12 @@ define(function(require, exports, module) {
                 /**
                  * 
                  */
-                setActiveEvaluator : setActiveEvaluator,
+                setActiveEvaluator: setActiveEvaluator,
                 
                 /**
                  *
                  */
-                getActiveEvaluator : getActiveEvaluator
+                getActiveEvaluator: getActiveEvaluator
             });
             
             plugin.load("immediate" + counter++);
@@ -383,7 +383,7 @@ define(function(require, exports, module) {
          *     
          *         function main(options, imports, register) {
          *             var immediate = imports.immediate;
-         *             var plugin    = new imports.Plugin("Your Name", main.consumes);
+         *             var plugin = new imports.Plugin("Your Name", main.consumes);
          * 
          *             plugin.on("load", function(){
          *                 var evaluator = {
@@ -392,7 +392,7 @@ define(function(require, exports, module) {
          *                     canEvaluate : function(str) { return str.trim() ? true : false; },
          *                     evaluate    : function(expression, cell, done) {
          *     
-         *                         executeCommand(expression, function(result){
+         *                         executeCommand(expression, function(result) {
          *                             cell.addWidget({ 
          *                                 html       : "<div class='result'>" 
          *                                     + result + "</div>",
@@ -420,7 +420,7 @@ define(function(require, exports, module) {
             get defaultEvaluator(){ return defaultEvaluator; },
             set defaultEvaluator(value){ defaultEvaluator = value; },
             
-            _events : [
+            _events: [
                 /**
                  * Fires when an evaluator is added.
                  * @event addEvaluator
@@ -453,16 +453,16 @@ define(function(require, exports, module) {
              * @param {Plugin}              plugin      The plugin responsible for adding the evaluator.
              * @fires addEvaluator
              */
-            addEvaluator : function(caption, id, evaluator, plugin){
+            addEvaluator: function(caption, id, evaluator, plugin) {
                 if (replTypes[id])
                     throw new Error("An evaluator is already registered with "
                         + "the id '" + id + "'");
                     
                 replTypes[id] = {
-                    caption   : caption, 
-                    id        : id, 
-                    evaluator : evaluator,
-                    plugin    : plugin
+                    caption: caption, 
+                    id: id, 
+                    evaluator: evaluator,
+                    plugin: plugin
                 };
                 emit("addEvaluator", replTypes[id]);
                 
@@ -480,9 +480,9 @@ define(function(require, exports, module) {
              * @param {Error}               callback.id         The id of the requested evaluator.
              * @param {Evaluator} callback.evaluator  The evaluator requested.
              */
-            findEvaluator : function(id, callback){
+            findEvaluator: function(id, callback) {
                 if (!id || !replTypes[id]) {
-                    handle.on("addEvaluator", function wait(e){
+                    handle.on("addEvaluator", function wait(e) {
                         if (!id || e.id == id)
                             callback(e.id, replTypes[e.id].evaluator);
                         
@@ -498,7 +498,7 @@ define(function(require, exports, module) {
              * Removes an evaluator from all immediate panes.
              * @param {String} id  The unique identifier of the evaluator to remove.
              */
-            removeEvaluator : function(id){
+            removeEvaluator: function(id) {
                 emit("removeEvaluator", replTypes[id]);
                 delete replTypes[id];
             }

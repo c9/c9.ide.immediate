@@ -4,32 +4,32 @@ define(function(require, module, exports) {
     return main;
 
     function main(options, imports, register) {
-        var Plugin    = imports.Plugin;
+        var Plugin = imports.Plugin;
         var immediate = imports.immediate;
         
-        function Evaluator(developer, deps, options){
+        function Evaluator(developer, deps, options) {
             var plugin = new Plugin(developer, deps);
-            var emit   = plugin.getEmitter();
+            var emit = plugin.getEmitter();
             emit.setMaxListeners(1000);
             
             var caption = options.caption;
-            var id      = options.id;
-            var mode    = options.mode;
+            var id = options.id;
+            var mode = options.mode;
             var message = options.message;
             
             /***** Methods *****/
             
-            function evaluate(expression, cell, cb){
+            function evaluate(expression, cell, cb) {
                 return emit("evaluate", {
-                    expression : expression,
-                    cell       : cell,
-                    callback   : cb
+                    expression: expression,
+                    cell: cell,
+                    callback: cb
                 });
             }
             
-            function canEvaluate(expression){
+            function canEvaluate(expression) {
                 return emit("canEvaluate", {
-                    expression : expression
+                    expression: expression
                 });
             }
             
@@ -187,7 +187,7 @@ define(function(require, module, exports) {
                  */
                 get caption(){ return caption; },
                 
-                _events : [
+                _events: [
                     /**
                      * 
                      */
@@ -234,7 +234,7 @@ define(function(require, module, exports) {
                  *         canEvaluate : function(str) { return str.trim() ? true : false; },
                  *         evaluate    : function(expression, cell, done) {
                  *         
-                 *             executeCommand(expression, function(err, result){
+                 *             executeCommand(expression, function(err, result) {
                  *                 if (err)
                  *                     done("Error: " + err);
                  *                 else {
@@ -258,7 +258,7 @@ define(function(require, module, exports) {
                  * @param {Function}        done           Call this function when the evaluation is async and the execution is completed.
                  * @param {String}          [done.message] The message to print below the cell in plain text.
                  */
-                evaluate : evaluate,
+                evaluate: evaluate,
                 
                 /**
                  * Determines whether the expression is valid and can be executed.
@@ -266,7 +266,7 @@ define(function(require, module, exports) {
                  * @param {String} expression  The expression to inspect.
                  * @return {Boolean}
                  */
-                canEvaluate : canEvaluate
+                canEvaluate: canEvaluate
             });
             
             return plugin;

@@ -19,22 +19,22 @@ define(function(require, exports, module) {
 
     function main(options, imports, register) {
         var Evaluator = imports.Evaluator;
-        var settings  = imports.settings;
+        var settings = imports.settings;
         var immediate = imports.immediate;
-        var ui        = imports.ui;
+        var ui = imports.ui;
         
         /***** Initialization *****/
         
         var plugin = new Evaluator("Ajax.org", main.consumes, {
-            caption : "Javascript (browser)",
-            id      : "jsbrowser",
-            mode    : "ace/mode/javascript",
-            message : "Welcome to the Javascript REPL. This REPL allows you to "
+            caption: "Javascript (browser)",
+            id: "jsbrowser",
+            mode: "ace/mode/javascript",
+            message: "Welcome to the Javascript REPL. This REPL allows you to "
                 + "test any single or multi line code in\na browser based "
                 + "javascript environment (iframe). It operates similar to "
                 + "your browser console."
         });
-        // var emit   = plugin.getEmitter();
+        // var emit = plugin.getEmitter();
         
         var iframe, win;
         
@@ -46,11 +46,11 @@ define(function(require, exports, module) {
             iframe = document.body.appendChild(document.createElement("iframe"));
             iframe.setAttribute("nwdisable", "nwdisable");
 
-            iframe.style.width    = "1px";
-            iframe.style.height   = "1px";
+            iframe.style.width = "1px";
+            iframe.style.height = "1px";
             iframe.style.position = "absolute";
-            iframe.style.left     = "-100px";
-            iframe.style.top      = "-100px";
+            iframe.style.left = "-100px";
+            iframe.style.top = "-100px";
             
             win = iframe.contentWindow;
         }
@@ -58,7 +58,7 @@ define(function(require, exports, module) {
         /***** Evaluator *****/
         
         var counter = 0;
-        function Console(cell){
+        function Console(cell) {
             this.name = "output_section" + (++counter);
             this.cell = cell;
             
@@ -66,7 +66,7 @@ define(function(require, exports, module) {
             this.cell.addWidget({ el: this.html, coverLine: true, fixedWidth: true });
         }
         Console.prototype = {
-            write : function () {
+            write: function () {
                 var html = this.html.appendChild(document.createElement("div"));
                 var type = arguments[arguments.length - 1];
                 html.className = type;
@@ -80,25 +80,25 @@ define(function(require, exports, module) {
                 html.updateWidget();
                 this.$scrollIntoView();  
             },
-            log : function(output){ 
+            log: function(output) { 
                 var args = Array.prototype.slice.apply(arguments);
                 args.push("log");
                 return this.write.apply(this, args); 
             },
-            error : function(output){ 
+            error: function(output) { 
                 var args = Array.prototype.slice.apply(arguments);
                 args.push("error");
                 return this.write.apply(this, args); 
             },
-            warn : function(output){ 
+            warn: function(output) { 
                 var args = Array.prototype.slice.apply(arguments);
                 args.push("warning");
                 return this.write.apply(this, args); 
             },
-            $update : function() {
+            $update: function() {
                 this.cell.session.repl.onWidgetChanged(this.cell);
             },
-            $scrollIntoView : function() {
+            $scrollIntoView: function() {
                 var renderer = this.cell.session.repl.editor.renderer;
                 // TODO add a better way to scroll ace cursor into view when rendered
                 setTimeout(function() {
@@ -107,7 +107,7 @@ define(function(require, exports, module) {
             }
         };
         
-        function insert(div, markup, name){
+        function insert(div, markup, name) {
             if (name !== undefined) 
                 insert(div, "<span class='property'>" + name + ": </span>");
             
@@ -117,7 +117,7 @@ define(function(require, exports, module) {
             if (div.lastChild && div.lastChild.nodeType == 1) {
                 var nodes = div.lastChild.querySelectorAll("a");
                 for (var i = 0; i < nodes.length; i++) {
-                    nodes[i].addEventListener("click", function(e){
+                    nodes[i].addEventListener("click", function(e) {
                         //@todo
                         alert(this.firstChild.nodeValue);
                         e.stopPropagation();
@@ -126,16 +126,16 @@ define(function(require, exports, module) {
             }
         }
         
-        function insertTree(div, caption, object, drawChildren){
+        function insertTree(div, caption, object, drawChildren) {
             // caption can be a string or an html element
             var treeitem = div.appendChild(document.createElement("span"));
-            var arrow    = treeitem.appendChild(document.createElement("span"));
+            var arrow = treeitem.appendChild(document.createElement("span"));
             treeitem.className = "treeitem";
-            arrow.className    = "arrow";
+            arrow.className = "arrow";
             treeitem.appendChild(caption);
             
             var container;
-            treeitem.addEventListener("click", function(e){
+            treeitem.addEventListener("click", function(e) {
                 if (container && ui.isChildOf(container, e.target, true))
                     return;
                 
@@ -154,7 +154,7 @@ define(function(require, exports, module) {
                 
                 // hack!
                 var target = e.currentTarget;
-                while(target) {
+                while (target) {
                     if (target.updateWidget) {
                         target.updateWidget();
                         break;
@@ -164,10 +164,10 @@ define(function(require, exports, module) {
             })
         }
         
-        function parseChildren(object, html){
+        function parseChildren(object, html) {
             if (object instanceof win.Array) {
                 if (object.length < 101) {
-                    // object.forEach(function(item, i){
+                    // object.forEach(function(item, i) {
                     //     renderType(item, html, 2, false, i);
                     //     insert(html, "<br />");
                     // });
@@ -198,13 +198,13 @@ define(function(require, exports, module) {
             }
             
             var keys = Object.getOwnPropertyNames(object);
-            keys.forEach(function(name){
+            keys.forEach(function(name) {
                 renderType(object[name], html, 2, 2, name);
                 insert(html, "<br />");
             });
         }
         
-        function renderType(object, html, log, short, name){
+        function renderType(object, html, log, short, name) {
             var type = typeof object;
             var caption;
             
@@ -218,7 +218,7 @@ define(function(require, exports, module) {
                         .replace(/\t/g, "    ")
                         .replace(/ /g, "&nbsp;")
                         .replace(/\n/g, "<br />");
-                    var str   = "\"<span class='string'>" + value + "</span>\"";
+                    var str = "\"<span class='string'>" + value + "</span>\"";
                     if (name && object.length > 100) {
                         var event = "this.style.display = \"none\";\
                             this.nextSibling.style.display = \"inline\";\
@@ -266,7 +266,7 @@ define(function(require, exports, module) {
                         
                         var found = false;
                         insert(preview, "[", name);
-                        object.every(function(item, i){
+                        object.every(function(item, i) {
                             renderType(item, preview, false, true);
                             if (i < object.length - 1)
                                 insert(preview, ", ");
@@ -274,7 +274,7 @@ define(function(require, exports, module) {
                             return i < 100;
                         });
                         
-                        var props = Object.getOwnPropertyNames(object).filter(function(n){
+                        var props = Object.getOwnPropertyNames(object).filter(function(n) {
                             return parseInt(n) != n;
                         });
                         var count = Math.min(Math.min(props.length, 5), 
@@ -294,7 +294,7 @@ define(function(require, exports, module) {
                     }
                     else {
                         insert(html, "[", name);
-                        object.forEach(function(item, i){
+                        object.forEach(function(item, i) {
                             renderType(item, html, false, 2);
                             if (i < object.length - 1)
                                 insert(html, ", ");
@@ -353,7 +353,7 @@ define(function(require, exports, module) {
                 var heading;
                 if (object["$$error"]) {
                     object = object["$$error"];
-                    heading   = object.stack.split(":")[0];
+                    heading = object.stack.split(":")[0];
                     heading = "<span class='err'>"
                         + heading + ": "
                         + (object.message || (!object ? object : object.toString()))
@@ -415,7 +415,7 @@ define(function(require, exports, module) {
             // cell.addWidget({rowCount: 8, el:editor.container, editor: editor})
             
             // var session = cell.session;
-            // var args    = str.trim().split(" ");
+            // var args = str.trim().split(" ");
             // if (evaluator.name && str.indexOf("-a") == -1)
             //     args.push("-a", evaluator.name);
             
@@ -445,7 +445,7 @@ define(function(require, exports, module) {
             try {
                 win.thrown = false;
                 win.result = win.eval(expression);
-            } catch(e) {
+            } catch (e) {
                 win.result = e;
                 win.thrown = true;
             }
@@ -455,7 +455,7 @@ define(function(require, exports, module) {
             return result;
         }
         
-        function getAllProperties(context, callback){
+        function getAllProperties(context, callback) {
             var results = evaluateHeadless(
                 "(" + function getAllProperties(obj) {
                     if (obj == null)
@@ -463,12 +463,12 @@ define(function(require, exports, module) {
                     var results = [];
                     do {
                         var props = Object.getOwnPropertyNames(obj);
-                        props.forEach(function(prop){
+                        props.forEach(function(prop) {
                             if (results.indexOf(prop) === -1)
                                 results.push(prop);
                         });
                         props = Object.keys(obj);
-                        props.forEach(function(prop){
+                        props.forEach(function(prop) {
                             if (results.indexOf(prop) === -1)
                                 results.push(prop);
                         });
@@ -484,10 +484,10 @@ define(function(require, exports, module) {
         plugin.on("load", function(){
             load();
         });
-        plugin.on("canEvaluate", function(e){
+        plugin.on("canEvaluate", function(e) {
             return canEvaluate(e.expression);
         });
-        plugin.on("evaluate", function(e){
+        plugin.on("evaluate", function(e) {
             return evaluate(e.expression, e.cell, e.callback);
         });
         plugin.on("enable", function(){

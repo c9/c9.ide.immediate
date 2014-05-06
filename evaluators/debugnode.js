@@ -7,24 +7,24 @@ define(function(require, exports, module) {
 
     function main(options, imports, register) {
         var Evaluator = imports.Evaluator;
-        var settings  = imports.settings;
-        var debug     = imports.debugger;
+        var settings = imports.settings;
+        var debug = imports.debugger;
         var immediate = imports.immediate;
         var callstack = imports.callstack;
-        var ui        = imports.ui;
+        var ui = imports.ui;
         
         /***** Initialization *****/
         
         var plugin = new Evaluator("Ajax.org", main.consumes, {
-            caption : "Debugger",
-            id      : "debugger",
-            mode    : "ace/mode/javascript", // @todo make this variable: repl.session.setMode
-            message : "Welcome to the debugger inspector. You can inspect "
+            caption: "Debugger",
+            id: "debugger",
+            mode: "ace/mode/javascript", // @todo make this variable: repl.session.setMode
+            message: "Welcome to the debugger inspector. You can inspect "
                 + "any process that the debugger is attached to. Code \nwill be "
                 + "executed in the global context unless on "
                 + "a breakpoint, then code is executed in the current frame."
         });
-        // var emit   = plugin.getEmitter();
+        // var emit = plugin.getEmitter();
         
         var dbg, log, lastCell;
         
@@ -34,18 +34,18 @@ define(function(require, exports, module) {
             loaded = true;
             
             // Set and clear the dbg variable
-            debug.on("attach", function(e){
+            debug.on("attach", function(e) {
                 dbg = e.implementation;
                 if (dbg.attachLog)
                     initLog(dbg.attachLog());
                 
                 immediate.defaultEvaluator = "debugger";
             });
-            debug.on("detach", function(e){
+            debug.on("detach", function(e) {
                 dbg = null;
                 immediate.defaultEvaluator = null;
             });
-            debug.on("stateChange", function(e){
+            debug.on("stateChange", function(e) {
                 plugin[e.action]();
             });
         }
@@ -94,23 +94,23 @@ define(function(require, exports, module) {
             });
         }
         
-        function initLog(proxy){
+        function initLog(proxy) {
             log = proxy;
-            log.on("log", function(e){
+            log.on("log", function(e) {
                 var args = Array.prototype.slice.apply(arguments);
                 args.push(e.type);
                 writeLog.apply(log, args); 
             }, plugin);
         }
         
-        function createWidget(cell){
+        function createWidget(cell) {
             cell.html = document.createElement("div");
             cell.addWidget({ el: cell.html, coverLine: true, fixedWidth: true });
         }
         
         /***** Analyzer *****/
         
-        function insert(div, markup, name){
+        function insert(div, markup, name) {
             if (name !== undefined) 
                 insert(div, "<span class='property'>" + name + ": </span>");
             
@@ -120,7 +120,7 @@ define(function(require, exports, module) {
             if (div.lastChild && div.lastChild.nodeType == 1) {
                 var nodes = div.lastChild.querySelectorAll("a");
                 for (var i = 0; i < nodes.length; i++) {
-                    nodes[i].addEventListener("click", function(e){
+                    nodes[i].addEventListener("click", function(e) {
                         //@todo
                         alert(this.firstChild.nodeValue);
                         e.stopPropagation();
@@ -129,16 +129,16 @@ define(function(require, exports, module) {
             }
         }
         
-        function insertTree(div, caption, object, drawChildren){
+        function insertTree(div, caption, object, drawChildren) {
             // caption can be a string or an html element
             var treeitem = div.appendChild(document.createElement("span"));
-            var arrow    = treeitem.appendChild(document.createElement("span"));
+            var arrow = treeitem.appendChild(document.createElement("span"));
             treeitem.className = "treeitem";
-            arrow.className    = "arrow";
+            arrow.className = "arrow";
             treeitem.appendChild(caption);
             
             var container;
-            treeitem.addEventListener("click", function(e){
+            treeitem.addEventListener("click", function(e) {
                 if (container && ui.isChildOf(container, e.target, true))
                     return;
                     
@@ -163,8 +163,8 @@ define(function(require, exports, module) {
             })
         }
         
-        function findWidgetAndUpdate(target){
-            while(target) {
+        function findWidgetAndUpdate(target) {
+            while (target) {
                 if (target.updateWidget) {
                     target.updateWidget();
                     break;
@@ -173,10 +173,10 @@ define(function(require, exports, module) {
             }
         }
         
-        function parseChildren(object, html, callback){
+        function parseChildren(object, html, callback) {
             if (object.value == "[Array]") {
                 if (object.length < 101) {
-                    object.forEach(function(item, i){
+                    object.forEach(function(item, i) {
                         renderType(item, html, 2, false, i);
                         insert(html, "<br />");
                     });
@@ -207,14 +207,14 @@ define(function(require, exports, module) {
             // }
             
             if (!object.properties && dbg) {
-                dbg.getProperties(object, function(err, properties){
+                dbg.getProperties(object, function(err, properties) {
                     // if (properties && properties.length)
                     parseChildren(object, html, callback)
                 });
                 return;
             }
             
-            (object.properties || []).forEach(function(prop){
+            (object.properties || []).forEach(function(prop) {
                 renderType(prop, html, 2, 2, prop.name);
                 insert(html, "<br />");
             });
@@ -222,16 +222,16 @@ define(function(require, exports, module) {
             callback();
         }
         
-        function getOwnProperties(object){
+        function getOwnProperties(object) {
             var result = [];
-            (object.properties || []).forEach(function(o){
+            (object.properties || []).forEach(function(o) {
                 if (typeof o.name != "number")
                     result.push(o)
             })
         }
         
-        function renderType(object, html, log, short, name){
-            var type  = object.type;
+        function renderType(object, html, log, short, name) {
+            var type = object.type;
             var value = object.value;
             var caption;
             
@@ -249,7 +249,7 @@ define(function(require, exports, module) {
                         .replace(/\t/g, "    ")
                         .replace(/ /g, "&nbsp;")
                         .replace(/\n/g, "<br />");
-                    var str   = "\"<span class='string'>" + value + "</span>\"";
+                    var str = "\"<span class='string'>" + value + "</span>\"";
                     if (name && object.length > 100) {
                         var event = "this.style.display = \"none\";\
                             this.nextSibling.style.display = \"inline\";\
@@ -301,7 +301,7 @@ define(function(require, exports, module) {
                         
                         insert(preview, "[", name);
                         
-                        (object.properties || []).every(function(item, i){
+                        (object.properties || []).every(function(item, i) {
                             if (typeof item.name != "number") {
                                 j++;
                                 return true;
@@ -332,7 +332,7 @@ define(function(require, exports, module) {
                     }
                     else {
                         insert(html, "[", name);
-                        (object.properties || []).every(function(item, i){
+                        (object.properties || []).every(function(item, i) {
                             if (typeof item.name != "number") {
                                 j++;
                                 return true;
@@ -397,7 +397,7 @@ define(function(require, exports, module) {
                 var heading;
                 if (object["$$error"]) {
                     object = object["$$error"];
-                    heading   = (object.stack || "").split(":")[0];
+                    heading = (object.stack || "").split(":")[0];
                     heading = "<span class='err'>"
                         + object.message
                         + "</span>";
@@ -456,7 +456,7 @@ define(function(require, exports, module) {
             if (cell.html)
                 cell.html.innerHTML = "";
             
-            evaluateHeadless(expression, function(result){
+            evaluateHeadless(expression, function(result) {
                 if (cell.setError && result["$$error"])
                     return cell.setError(result["$$error"]);
                 
@@ -476,12 +476,12 @@ define(function(require, exports, module) {
             }
             
             dbg.evaluate(expression, callstack.activeFrame, 
-              !callstack.activeFrame, false, function(err, variable){
+              !callstack.activeFrame, false, function(err, variable) {
                 if (err)
                     return callback({ "$$error" : err, type: err });
                 
                 if (variable.type == "function") {
-                    dbg.serializeVariable(variable, function(value){
+                    dbg.serializeVariable(variable, function(value) {
                         variable.name = value;
                         callback(variable);
                     });
@@ -492,27 +492,27 @@ define(function(require, exports, module) {
             });
         }
         
-        function addVariables(list, node){
-            node.variables.forEach(function(n){
+        function addVariables(list, node) {
+            node.variables.forEach(function(n) {
                 list.push(n.name);
             });
         }
         
-        function getAllProperties(context, callback){
+        function getAllProperties(context, callback) {
             // Return all properties of the current context
             if (context == -1) {
                 var frame = callstack.activeFrame;
-                var vars  = [];
+                var vars = [];
                 var count = 0;
                 if (frame) {
                     addVariables(vars, frame);
                     
-                    frame.scopes.forEach(function(scope){
+                    frame.scopes.forEach(function(scope) {
                         if (scope.status == "loaded")
                             addVariables(vars, scope);
                         else {
                             count++;
-                            dbg.getScope(frame, scope, function(err){
+                            dbg.getScope(frame, scope, function(err) {
                                 if (!err)
                                     addVariables(vars, scope);
                                 
@@ -530,7 +530,7 @@ define(function(require, exports, module) {
             }
             
             console.warn("DEBUG: (properties)", context);
-            evaluateHeadless(context, function(variable){
+            evaluateHeadless(context, function(variable) {
                 console.warn("DEBUG: (properties-received)", variable);
                 
                 if (variable["$$error"])
@@ -538,20 +538,20 @@ define(function(require, exports, module) {
                 if (!variable.properties)
                     return callback(null, []);
                     
-                var results = variable.properties.map(function(m){
+                var results = variable.properties.map(function(m) {
                     return m.name;
                 });
                 
-                function check(variable){
+                function check(variable) {
                     if (variable.prototype) {
                         if (!dbg) return callback(new Error("disconnected"));
                         
                         console.warn("DEBUG: (properties-properties)", variable);
-                        dbg.getProperties(variable.prototype, function(err, props){
+                        dbg.getProperties(variable.prototype, function(err, props) {
                         console.warn("DEBUG: (properties-properties-received)", variable, err);
                             if (err) return callback(err);
                             
-                            props.forEach(function(prop){
+                            props.forEach(function(prop) {
                                 if (results.indexOf(prop.name) === -1)
                                     results.push(prop.name);
                             });
@@ -572,10 +572,10 @@ define(function(require, exports, module) {
         plugin.on("load", function(){
             load();
         });
-        plugin.on("canEvaluate", function(e){
+        plugin.on("canEvaluate", function(e) {
             return canEvaluate(e.expression);
         });
-        plugin.on("evaluate", function(e){
+        plugin.on("evaluate", function(e) {
             return evaluate(e.expression, e.cell, e.callback);
         });
         plugin.on("enable", function(){
