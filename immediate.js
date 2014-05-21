@@ -218,7 +218,7 @@ define(function(require, exports, module) {
             }
             
             // Set the tab in loading state - later this could be the output block
-            // currentDocument.tab.className.add("loading");
+            // currentDocument.tab.classList.add("loading");
             // settings.save();
             
             /***** Lifecycle *****/
