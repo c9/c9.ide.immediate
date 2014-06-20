@@ -299,6 +299,8 @@ define(function(require, exports, module) {
             plugin.on("getState", function(e) {
                 // @todo at one for each value container
                 var session = e.doc.getSession();
+                if (!session.repl) return;
+                
                 e.state.type = session.type;
                 var data = session.repl.history._data;
                 var pos = session.repl.history.position;
