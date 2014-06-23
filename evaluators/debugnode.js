@@ -269,7 +269,7 @@ define(function(require, exports, module) {
             }
             else if (type == "function") {
                 insert(html, "<span class='function'>" 
-                    + object.name
+                    + (object.name + "")
                         .replace(/ /g, "&nbsp;") 
                         .replace(/\n/g, "<br />") 
                     + "</span>", name);
