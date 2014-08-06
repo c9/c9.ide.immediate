@@ -99,7 +99,10 @@ define(function(require, exports, module) {
                 this.cell.session.repl.onWidgetChanged(this.cell);
             },
             $scrollIntoView: function() {
-                var renderer = this.cell.session.repl.editor.renderer;
+                var editor = this.cell.session.repl.editor;
+                if (!editor) // tab isn't active
+                    return;
+                var renderer = editor.renderer;
                 // TODO add a better way to scroll ace cursor into view when rendered
                 setTimeout(function() {
                     renderer.scrollCursorIntoView();
