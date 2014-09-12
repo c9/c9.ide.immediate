@@ -104,8 +104,7 @@ define(function(require, exports, module) {
         function Immediate(){
             var Baseclass = editors.findEditor("ace");
             
-            var deps = main.consumes.splice(0, main.consumes.length - 1);
-            var plugin = new Baseclass(true, [], deps);
+            var plugin = new Baseclass(true, [], main.consumes);
             // var emit = plugin.getEmitter();
             
             var ddType, btnClear, ace, menu;
