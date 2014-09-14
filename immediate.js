@@ -161,10 +161,10 @@ define(function(require, exports, module) {
                     if (e && !e.value)
                         return;
                     var items = menu.childNodes;
-                    var value = ddType.selectedType || items[0].value;
+                    var value = ddType.selectedType || items[0].getAttribute("value");
                     var selectedItem;
                     items.forEach(function(item) {
-                        var selected = item.value == value ? true :  false;
+                        var selected = item.getAttribute("value") == value ? true :  false;
                         if (selected) selectedItem = item;
                         item.setAttribute("selected", selected);
                     });
