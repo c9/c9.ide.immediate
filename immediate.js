@@ -19,8 +19,6 @@ define(function(require, exports, module) {
         var Repl = require("plugins/c9.ide.ace.repl/repl").Repl;
         var markup = require("text!./immediate.xml");
         
-        var counter = 0;
-        
         /***** Initialization *****/
         
         var extensions = [];
@@ -360,7 +358,7 @@ define(function(require, exports, module) {
                 getActiveEvaluator: getActiveEvaluator
             });
             
-            plugin.load("immediate" + counter++);
+            plugin.load(null, "immediate");
             
             return plugin;
         }
