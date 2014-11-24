@@ -5,7 +5,7 @@
       class   = ""
       zindex  = "10000"
       height  = "23"
-      style   = "position:absolute;bottom:7px;right:5px;">
+      style   = "position:absolute;bottom:3px;right:5px;">
         <a:button id="ddType" 
           skin    = "label"
           style   = "cursor:pointer"
