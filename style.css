@@ -47,7 +47,7 @@
     position: absolute;
     overflow: hidden;
     text-indent: -2000px;
-    .image-2x("@{image-path}/@{immediate-tree-arrow}", 20px, 10px);
+    .image-2x("@{immediate-tree-arrow}", 20px, 10px);
     background-repeat: no-repeat;
 }
 .immediate .treeitem .arrow.expanded{
@@ -172,7 +172,7 @@
     .font-smoothing(@immediate-dark-font-smoothing);
 }
 .immediate .ace_dark .treeitem .arrow{
-    .image-2x("@{image-path}/@{immediate-dark-tree-arrow}", 20px, 10px);
+    .image-2x("@{immediate-dark-tree-arrow}", 20px, 10px);
 }
 .immediate .ace_dark .null{
     color : @immediate-dark-null;
