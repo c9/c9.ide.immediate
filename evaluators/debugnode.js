@@ -456,9 +456,6 @@ define(function(require, exports, module) {
             if (cell.html)
                 cell.html.innerHTML = "";
             
-            if (!dbg.features.executeCode)
-                return writeLog("Code execution is not supported by this debugger");
-            
             evaluateHeadless(expression, function(result) {
                 if (cell.setError && result["$$error"])
                     return cell.setError(result["$$error"]);
@@ -473,8 +470,11 @@ define(function(require, exports, module) {
         function evaluateHeadless(expression, callback) {
             if (!callback) return;
             
-            if (!dbg) {
-                var err = new Error("Debug Session is not running");
+            if (!dbg || !dbg.features.executeCode) {
+                var err = new Error(
+                    dbg && !dbg.features.executeCode
+                        ? "Code execution is not supported by this debugger"
+                        : "Debug Session is not running");
                 return callback({ "$$error" : err, type: err });
             }
             
