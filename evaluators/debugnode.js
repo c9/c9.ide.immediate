@@ -38,7 +38,7 @@ define(function(require, exports, module) {
                 dbg = e.implementation;
                 if (dbg.attachLog)
                     initLog(dbg.attachLog());
-                
+                    
                 immediate.defaultEvaluator = "debugger";
             });
             debug.on("detach", function(e) {
@@ -455,6 +455,9 @@ define(function(require, exports, module) {
             
             if (cell.html)
                 cell.html.innerHTML = "";
+            
+            if (!dbg.features.executeCode)
+                return writeLog("Code execution is not supported by this debugger");
             
             evaluateHeadless(expression, function(result) {
                 if (cell.setError && result["$$error"])
