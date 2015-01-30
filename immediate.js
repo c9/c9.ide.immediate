@@ -355,7 +355,12 @@ define(function(require, exports, module) {
                 /**
                  *
                  */
-                getActiveEvaluator: getActiveEvaluator
+                getActiveEvaluator: getActiveEvaluator,
+                
+                /**
+                 * @ignore This is here to overwrite default behavior
+                 */
+                isClipboardAvailable: function(e) { return !e.fromKeyboard }
             });
             
             plugin.load(null, "immediate");
