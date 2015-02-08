@@ -9,15 +9,13 @@
         "url": "http://github.com/c9/c9.ide.immediate.git"
     },
     "plugins": {
-        "plugin": {
-            "evaluator": {},
-            "immediate": {}
-        }
+        "evaluator": {},
+        "immediate": {}
     },
     "categories": [
         "core"
     ],
     "licenses": [
-        ""
+        "MIT"
     ]
 }
