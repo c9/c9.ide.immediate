@@ -264,7 +264,7 @@ define(function(require, exports, module) {
                     insert(html, object, name);
                 }
             }
-            else if (type == "number") {
+            else if (type == "number" || type == "int" || type == "float") {
                 insert(html, "<span class='number'>" + value + "</span>", name);
             }
             else if (type == "function") {
@@ -274,7 +274,7 @@ define(function(require, exports, module) {
                         .replace(/\n/g, "<br />") 
                     + "</span>", name);
             }
-            else if (type == "boolean") {
+            else if (type == "boolean" || type == "bool") {
                 insert(html, "<span class='boolean'>" + value + "</span>", name);
             }
             else if (!log && type == "regexp") {
