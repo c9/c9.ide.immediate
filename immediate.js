@@ -87,7 +87,7 @@ define(function(require, exports, module) {
             ui.insertCss(require("text!./style.css"), options.staticPrefix, handle);
         });
 
-        //Search through pages
+        // Search through pages
         function search(cb) {
             return !tabs.getTabs().every(function(tab) {
                 if (tab.editorType == "immediate") {
@@ -239,6 +239,8 @@ define(function(require, exports, module) {
                 if (session.repl) return;
                 
                 session.changeType = function(type, noMessage) {
+                    if (type == session.type)
+                        return;
                     handle.findEvaluator(type, function(type, evaluator) {
                         session.type = type;
                         
