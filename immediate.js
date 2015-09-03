@@ -239,7 +239,7 @@ define(function(require, exports, module) {
                 if (session.repl) return;
                 
                 session.changeType = function(type, noMessage) {
-                    if (session.repl && session.repl.type == type)
+                    if (type == session.type)
                         return;
                     handle.findEvaluator(type, function(type, evaluator) {
                         session.type = type;
@@ -256,7 +256,6 @@ define(function(require, exports, module) {
                                 session.repl.attach(ace);
                         }
                         
-                        session.repl.type = type;
                         session.repl.clear();
                         
                         if (!noMessage) {
