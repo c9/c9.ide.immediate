@@ -80,7 +80,39 @@ require(["lib/architect/architect", "lib/chai/chai"],
         },
         "plugins/c9.ide.immediate/evaluator",
         "plugins/c9.ide.immediate/evaluators/browserjs",
-        "plugins/c9.ide.console/console",
+        "plugins/c9.ide.immediate/evaluators/bash",
+        {
+            packagePath: "plugins/c9.ide.console/console",
+            defaultState: {
+                type: "pane",
+                nodes: [{
+                    type: "tab",
+                    editorType: "ace",
+                    document: {
+                        value: "js",
+                        path: "/foo"
+                    }
+                }, {
+                    type: "tab",
+                    editorType: "immediate",
+                    document: {
+                        title: "js",
+                        immediate: {
+                            type: "jsbrowser",
+                        },
+                    }
+                }, {
+                    type: "tab",
+                    editorType: "immediate",
+                    document: {
+                        title: "bash",
+                        immediate: {
+                            type: "bash",
+                        },
+                    }
+                }]
+            }
+        },
         "plugins/c9.fs/proc",
         "plugins/c9.fs/fs",
         "plugins/c9.vfs.client/vfs_client",
@@ -117,7 +149,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
     
     function main(options, imports, register) {
         var immediate = imports.immediate;
-        var tabs = imports.tabManager;
+        var tabManager = imports.tabManager;
         
         expect.html.setConstructor(function(tab) {
             if (typeof tab == "object")
@@ -145,15 +177,34 @@ require(["lib/architect/architect", "lib/chai/chai"],
                 window.bar.$ext.style.height = "150px";
       
                 document.body.style.marginBottom = "150px";
+                tabManager.containers[0].$ext.style.height="100%";
                 
                 done();
             });
             
             describe("addType(), on.evaluate", function(){
-                it('should add an item to the dropdown and run it', function(done) {
-                    // var inp = tabs.focussedTab.editor.getElement("txtInput");
-                    // inp.setValue("1+1");
-                    // inp.dispatchEvent("keydown", {keyCode: 13});
+                it("should use evaluator types from config", function(done) {
+                    var tabs = tabManager.getTabs();
+                    expect(tabs.length).is.equal(3);
+                    var tab = tabs[1];
+                    tab.activate();
+                    expect(tab.editor.getElement("ddType").selectedType).is.equal("jsbrowser");
+                    tab.editor.ace.repl.clear();
+                    tab.editor.ace.setValue("j");
+                    expect(tab.editor.ace.getValue()).is.equal("j");
+                    
+                    tab = tabs[2];
+                    tab.activate();
+                    expect(tab.editor.getElement("ddType").selectedType).is.equal("bash");
+                    expect(tab.editor.ace.getValue()).is.not.equal("j");
+                    tab.editor.ace.repl.clear();
+                    tab.editor.ace.setValue("x");
+                    
+                    tab = tabs[1];
+                    tab.activate();
+                    expect(tab.editor.getElement("ddType").selectedType).is.equal("jsbrowser");
+                    expect(tab.editor.ace.getValue()).is.equal("j");
+                    
                     done();
                 });
             });
