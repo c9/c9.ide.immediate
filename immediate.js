@@ -124,7 +124,7 @@ define(function(require, exports, module) {
                 ace.setOption("showFoldWidgets", false);
                 ace.setOption("highlightActiveLine", false);
                 ace.setOption("highlightGutterLine", false);
-                ace.renderer.setScrollMargin(10, 10);
+                ace.renderer.setScrollMargin(0, 10);
                 
                 e.htmlNode.className += " immediate";
                 
@@ -171,10 +171,13 @@ define(function(require, exports, module) {
                 
                 ddType.setAttribute("submenu", menu);
                 ddType.setType = function (type) {
-                    if (type == ddType.selectedType || !replTypes[type])
+                    if (type == ddType.selectedType)
                         return;
+                    var caption = replTypes[type]
+                        ? replTypes[type].caption
+                        : type + " (Unknown)";
                     ddType.selectedType = type;
-                    ddType.setAttribute("caption", replTypes[type].caption);
+                    ddType.setAttribute("caption", caption);
                     ddType.dispatchEvent("afterchange");
                 };
                 
@@ -201,7 +204,8 @@ define(function(require, exports, module) {
                     value: value,
                     type: "radio"
                 }));
-                
+                if (ddType.selecttedType == value)
+                    ddType.setAttribute("caption", caption);
                 plugin.addElement(item);
             }
             
@@ -321,8 +325,6 @@ define(function(require, exports, module) {
             });
             plugin.on("clear", function(){
                 if (currentDocument) {
-                    var session = currentDocument.getSession();
-                    session.changeType(session.type, true);
                     plugin.focus();
                 }
             });
