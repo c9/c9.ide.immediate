@@ -124,8 +124,7 @@ define(function(require, exports, module) {
                 ace.setOption("showFoldWidgets", false);
                 ace.setOption("highlightActiveLine", false);
                 ace.setOption("highlightGutterLine", false);
-                // ace.setOption("fontSize", 11);
-                // ace.container.style.lineHeight = "17px";
+                ace.renderer.setScrollMargin(10, 10);
                 
                 e.htmlNode.className += " immediate";
                 

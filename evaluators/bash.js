@@ -87,8 +87,11 @@ define(function(require, exports, module) {
         }
         
         function write(cell, data) {
-            cell.insert(cell.range.end, data);
-            scroll(cell);
+            var range = cell.getRange();
+            if (range) {
+                cell.insert(range.end, data);
+                scroll(cell);
+            }
         }
         function scroll(cell) {
             var editor = cell.session.repl.editor;
