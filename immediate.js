@@ -204,7 +204,7 @@ define(function(require, exports, module) {
                     value: value,
                     type: "radio"
                 }));
-                if (ddType.selecttedType == value)
+                if (ddType.selectedType == value)
                     ddType.setAttribute("caption", caption);
                 plugin.addElement(item);
             }

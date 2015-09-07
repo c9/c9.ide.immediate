@@ -9,7 +9,7 @@
         <a:button id="ddType" 
           skin    = "label"
           style   = "cursor:pointer"
-          margin  = "1 7 4 3"
+          margin  = "1 7 0 0"
           caption = "this.caption != ''"
           submenudir = "up" />
         <a:button id="btnClear"
