@@ -24,7 +24,6 @@ define(function(require, exports, module) {
         var bash;
         
         function load(){
-            
         }
         
         /***** Evaluator *****/
