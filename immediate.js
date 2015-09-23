@@ -126,6 +126,13 @@ define(function(require, exports, module) {
                 ace.setOption("highlightGutterLine", false);
                 ace.renderer.setScrollMargin(0, 10);
                 
+                ace.commands.addCommands([
+                    {
+                        bindKey: "Ctrl-C",
+                        exec: function(){ abort(); }
+                    }
+                ]);
+                
                 e.htmlNode.className += " immediate";
                 
                 // Allow Selection (APF)
@@ -215,6 +222,12 @@ define(function(require, exports, module) {
             
             function getActiveEvaluator() {
                 return ddType.selectedType;
+            }
+            
+            function abort(){
+                var session = currentDocument.getSession();
+                if (session.repl.evaluator.abort)
+                    session.repl.evaluator.abort();
             }
             
             // Set the tab in loading state - later this could be the output block

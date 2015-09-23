@@ -16,7 +16,7 @@ define(function(require, exports, module) {
         var plugin = new Evaluator("Ajax.org", main.consumes, {
             caption: "Bash",
             id: "bash",
-            mode: "ace/mode/javascript",
+            mode: "ace/mode/sh",
             message: "Welcome to the Bash REPL."
         });
         // var emit = plugin.getEmitter();
@@ -37,7 +37,7 @@ define(function(require, exports, module) {
         function evaluate(expression, cell, cb) {
             if (!expression.trim())
                 return cell.remove();
-            cell.setValue("\n");
+            // cell.setValue("\n");
             cell.setWaiting(true);
             scroll(cell);
             getBash({}, function(err, bash) {
@@ -93,6 +93,12 @@ define(function(require, exports, module) {
                 scroll(cell);
             }
         }
+        
+        function abort(){
+            if (bash && !bash.exited)
+                bash.kill();
+        }
+        
         function scroll(cell) {
             var editor = cell.session.repl.editor;
             if (!editor) // tab isn't active
@@ -148,7 +154,15 @@ define(function(require, exports, module) {
          * Simple bash evaluator example for testing
          **/
         plugin.freezePublicAPI({
-            getAllProperties: getAllProperties
+            /**
+             * 
+             */
+            getAllProperties: getAllProperties,
+            
+            /**
+             * 
+             */
+            abort: abort
         });
         
         register(null, {
