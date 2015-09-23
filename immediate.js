@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 
     function main(options, imports, register) {
         var editors = imports.editors;
-        var tabs = imports.tabManager;
+        var tabManager = imports.tabManager;
         var ui = imports.ui;
         var menus = imports.menus;
         var commands = imports.commands;
@@ -32,11 +32,11 @@ define(function(require, exports, module) {
         
         handle.on("load", function(){
             handle.addElement(
-                tabs.getElement("mnuEditors").appendChild(
+                tabManager.getElement("mnuEditors").appendChild(
                     new ui.item({
                         caption: "New Immediate Window",
                         onclick: function(e) {
-                            tabs.open({
+                            tabManager.open({
                                 active: true,
                                 pane: this.parentNode.pane,
                                 editorType: "immediate"
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 
             menus.addItemByPath("Window/New Immediate Window", new ui.item({
                 onclick: function(){
-                    tabs.open({
+                    tabManager.open({
                         active: true,
                         pane: this.parentNode.pane,
                         editorType: "immediate"
@@ -70,7 +70,7 @@ define(function(require, exports, module) {
                     if (search(done)) return;
                     
                     // Else open the output panel in the console
-                    tabs.open({
+                    tabManager.open({
                         editorType: "immediate", 
                         active: true,
                         pane: c9console.getPanes()[0],
@@ -89,9 +89,9 @@ define(function(require, exports, module) {
 
         // Search through pages
         function search(cb) {
-            return !tabs.getTabs().every(function(tab) {
+            return !tabManager.getTabs().every(function(tab) {
                 if (tab.editorType == "immediate") {
-                    tabs.focusTab(tab);
+                    tabManager.focusTab(tab);
                     if (cb) cb(null, tab);
                     return false;
                 }
@@ -126,12 +126,14 @@ define(function(require, exports, module) {
                 ace.setOption("highlightGutterLine", false);
                 ace.renderer.setScrollMargin(0, 10);
                 
-                ace.commands.addCommands([
-                    {
-                        bindKey: "Ctrl-C",
-                        exec: function(){ abort(); }
-                    }
-                ]);
+                commands.addCommand({
+                    bindKey: "Ctrl-C",
+                    name: "abortimmediateexpression",
+                    isAvailable: function(){
+                        return (tabManager.focussedTab || 0).editorType == "immediate";
+                    },
+                    exec: function(){ abort(); }
+                }, plugin);
                 
                 e.htmlNode.className += " immediate";
                 
@@ -224,7 +226,7 @@ define(function(require, exports, module) {
                 return ddType.selectedType;
             }
             
-            function abort(){
+            function abort() {
                 var session = currentDocument.getSession();
                 if (session.repl.evaluator.abort)
                     session.repl.evaluator.abort();

@@ -48,6 +48,8 @@ define(function(require, exports, module) {
                 bash.cell = cell;
                 cell.tokenizerState = "comment";
                 bash.stdout.on("data", bash.onData = function(data) {
+                    if (bash.aborted) return;
+                    
                     if (data.indexOf("ß") != -1) {
                         data = data.replace(/ß\s*/, "");
                         done();
@@ -55,11 +57,15 @@ define(function(require, exports, module) {
                     write(cell, data);
                 });
                 bash.stderr.on("data", bash.onErr = function(data) {
+                    if (bash.aborted) return;
+                    
                     write(cell, data);
                 });
                 bash.on("exit", bash.onExit = function(code) {
                     bash.exited = true;
-                    if (code)
+                    if (bash.aborted)
+                        return done(new Error("Process aborted by user"));
+                    else if (code)
                         return done(new Error("Process exited with code " + code));
                     done();
                 });
@@ -95,8 +101,10 @@ define(function(require, exports, module) {
         }
         
         function abort(){
-            if (bash && !bash.exited)
+            if (bash && !bash.exited) {
+                bash.aborted = true;
                 bash.kill();
+            }
         }
         
         function scroll(cell) {
@@ -143,6 +151,7 @@ define(function(require, exports, module) {
         });
         plugin.on("unload", function(){
             if (bash) {
+                bash.aborted = true;
                 bash.kill();
             }
             loaded = false;
