@@ -33,6 +33,13 @@ define(function(require, module, exports) {
                 });
             }
             
+            function draw(parent){
+                return emit("draw", {
+                    aml: parent,
+                    html: parent.$int
+                });
+            }
+            
             /***** Lifecycle *****/
         
             plugin.on("load", function(){
@@ -266,7 +273,11 @@ define(function(require, module, exports) {
                  * @param {String} expression  The expression to inspect.
                  * @return {Boolean}
                  */
-                canEvaluate: canEvaluate
+                canEvaluate: canEvaluate,
+                
+                /**
+                 */
+                draw: draw
             });
             
             return plugin;

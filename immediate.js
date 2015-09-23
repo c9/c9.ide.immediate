@@ -17,7 +17,6 @@ define(function(require, exports, module) {
         var aceStatus = imports["ace.status"];
         
         var Repl = require("plugins/c9.ide.ace.repl/repl").Repl;
-        var markup = require("text!./immediate.xml");
         
         /***** Initialization *****/
         
@@ -105,17 +104,42 @@ define(function(require, exports, module) {
             var plugin = new Baseclass(true, [], main.consumes);
             // var emit = plugin.getEmitter();
             
-            var ddType, btnClear, ace, menu;
+            var ddType, btnClear, ace, menu, statusbar;
             
             plugin.on("draw", function(e) {
                 aceStatus.draw();
                 
                 // Create UI elements
-                ui.insertMarkup(e.tab, markup, plugin);
+                statusbar = e.tab.appendChild(new ui.bar({
+                    skin: "bar-status" ,
+                    skinset: "c9statusbar",
+                    zindex: 10000,
+                    height: 23,
+                    style: "position:absolute;bottom:3px;right:5px;"
+                }));
                 
-                ddType = plugin.getElement("ddType");
-                btnClear = plugin.getElement("btnClear");
-                menu = plugin.getElement("menu");
+                menu = new ui.menu({
+                    htmlNode: document.body,
+                    render: "runtime",
+                    class: "mnuSbPrefs"
+                });
+                plugin.addElement(menu);
+                
+                ddType = ui.insertByIndex(statusbar, new ui.button({
+                    skin: "label",
+                    style: "cursor:pointer",
+                    margin: "1 7 0 0",
+                    submenudir: "up",
+                    submenu: menu
+                }), 1000, plugin);
+                
+                btnClear = ui.insertByIndex(statusbar, new ui.button({
+                    margin: "0 3 0 0",
+                    skin: "btn_console" ,
+                    skinset: "c9statusbar",
+                    class: "clear",
+                    submenudir: "up"
+                }), 100000, plugin);
                 
                 ace = plugin.ace;
                 
@@ -178,7 +202,6 @@ define(function(require, exports, module) {
                     ddType.setType(value);
                 }
                 
-                ddType.setAttribute("submenu", menu);
                 ddType.setType = function (type) {
                     if (type == ddType.selectedType)
                         return;
@@ -215,7 +238,10 @@ define(function(require, exports, module) {
                 }));
                 if (ddType.selectedType == value)
                     ddType.setAttribute("caption", caption);
-                plugin.addElement(item);
+                
+                plugin.addOther(function(){
+                    item.parentNode.removeChild(item);
+                });
             }
             
             function setActiveEvaluator(value) {
@@ -283,9 +309,14 @@ define(function(require, exports, module) {
                             cell.setValue(evaluator.message + "\n");
                         }
                         
+                        if (session.repl.evaluator && session.repl.evaluator != evaluator)
+                            session.repl.evaluator.cleanUp("elements");
+                        
                         session.repl.ensureLastInputCell();
                         session.repl.setEvaluator(evaluator);
                         session.repl.session.setMode(evaluator.mode);
+                        
+                        evaluator.draw(statusbar);
                         
                         doc.tooltip = 
                         doc.title = "Immediate (" + evaluator.caption + ")";
@@ -366,6 +397,11 @@ define(function(require, exports, module) {
              * @readonly
              */
             plugin.freezePublicAPI({
+                /**
+                 * 
+                 */
+                get statusbar(){ return statusbar; },
+                
                 /**
                  * 
                  */

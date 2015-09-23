@@ -22,10 +22,9 @@ define(function(require, exports, module) {
         // var emit = plugin.getEmitter();
         
         var bash;
-        var loaded;
+        
         function load(){
-            if (loaded) return;
-            loaded = true;
+            
         }
         
         /***** Evaluator *****/
@@ -39,6 +38,7 @@ define(function(require, exports, module) {
                 return cell.remove();
             // cell.setValue("\n");
             cell.setWaiting(true);
+            cell.setValue("");
             scroll(cell);
             getBash({}, function(err, bash) {
                 if (err) 
@@ -154,7 +154,6 @@ define(function(require, exports, module) {
                 bash.aborted = true;
                 bash.kill();
             }
-            loaded = false;
         });
         
         /***** Register and define API *****/
