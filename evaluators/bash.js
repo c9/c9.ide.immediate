@@ -17,7 +17,7 @@ define(function(require, exports, module) {
             caption: "Bash",
             id: "bash",
             mode: "ace/mode/sh",
-            message: "Welcome to the Bash REPL."
+            message: "# Welcome to the Bash REPL."
         });
         // var emit = plugin.getEmitter();
         
@@ -125,7 +125,6 @@ define(function(require, exports, module) {
                 bash = p;
                 callback(err, bash);
             });
-            
         }
         
         function getAllProperties(context, callback) {
