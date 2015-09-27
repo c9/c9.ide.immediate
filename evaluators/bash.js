@@ -118,7 +118,7 @@ define(function(require, exports, module) {
         }
         
         function getBash(opts, callback) {
-            if (bash && !bash.exited)
+            if (bash && !bash.exited && !bash.aborted)
                 return callback(null, bash);
             proc.spawn("bash", { args: [] }, function(err, p) {
                 bash = p;

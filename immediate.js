@@ -154,7 +154,9 @@ define(function(require, exports, module) {
                     bindKey: "Ctrl-C",
                     name: "abortimmediateexpression",
                     isAvailable: function(){
-                        return (tabManager.focussedTab || 0).editorType == "immediate";
+                        var tab = tabManager.focussedTab;
+                        if (tab && tab.editorType == "immediate" && tab.editor && tab.editor.ace)
+                           return tab.editor.ace.selection.isEmpty();
                     },
                     exec: function(){ abort(); }
                 }, plugin);
