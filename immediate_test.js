@@ -182,27 +182,24 @@ require(["lib/architect/architect", "lib/chai/chai"],
                 done();
             });
             
-            describe("addType(), on.evaluate", function(){
+            describe("on.evaluate", function(){
                 it("should use evaluator types from config", function(done) {
                     var tabs = tabManager.getTabs();
                     expect(tabs.length).is.equal(3);
                     var tab = tabs[1];
                     tab.activate();
-                    expect(tab.editor.getElement("ddType").selectedType).is.equal("jsbrowser");
                     tab.editor.ace.repl.clear();
                     tab.editor.ace.setValue("j");
                     expect(tab.editor.ace.getValue()).is.equal("j");
                     
                     tab = tabs[2];
                     tab.activate();
-                    expect(tab.editor.getElement("ddType").selectedType).is.equal("bash");
                     expect(tab.editor.ace.getValue()).is.not.equal("j");
                     tab.editor.ace.repl.clear();
                     tab.editor.ace.setValue("x");
                     
                     tab = tabs[1];
                     tab.activate();
-                    expect(tab.editor.getElement("ddType").selectedType).is.equal("jsbrowser");
                     expect(tab.editor.ace.getValue()).is.equal("j");
                     
                     done();
