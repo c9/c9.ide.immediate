@@ -242,7 +242,8 @@ define(function(require, exports, module) {
                     ddType.setAttribute("caption", caption);
                 
                 plugin.addOther(function(){
-                    item.parentNode.removeChild(item);
+                    if (item.parentNode)
+                        item.parentNode.removeChild(item);
                 });
             }
             
