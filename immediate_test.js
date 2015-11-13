@@ -191,16 +191,19 @@ require(["lib/architect/architect", "lib/chai/chai"],
                     tab.editor.ace.repl.clear();
                     tab.editor.ace.setValue("j");
                     expect(tab.editor.ace.getValue()).is.equal("j");
+                    expect(tab.editor.ace.repl.evaluator.name).is.equal("immediate.browserjs");
                     
                     tab = tabs[2];
                     tab.activate();
                     expect(tab.editor.ace.getValue()).is.not.equal("j");
                     tab.editor.ace.repl.clear();
                     tab.editor.ace.setValue("x");
+                    expect(tab.editor.ace.repl.evaluator.name).is.equal("immediate.bash");
                     
                     tab = tabs[1];
                     tab.activate();
                     expect(tab.editor.ace.getValue()).is.equal("j");
+                    expect(tab.editor.ace.repl.evaluator.name).is.equal("immediate.browserjs");
                     
                     done();
                 });
