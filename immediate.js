@@ -156,7 +156,7 @@ define(function(require, exports, module) {
                     isAvailable: function(){
                         var tab = tabManager.focussedTab;
                         if (tab && tab.editorType == "immediate" && tab.editor && tab.editor.ace)
-                           return tab.editor.ace.selection.isEmpty();
+                           return tab.editor.ace.selection.isEmpty() && tab.editor.ace.isFocused();
                     },
                     exec: function(){ abort(); }
                 }, plugin);
