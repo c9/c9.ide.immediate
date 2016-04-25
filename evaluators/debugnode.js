@@ -404,45 +404,55 @@ define(function(require, exports, module) {
                     
                     caption = document.createElement("span");
                     insert(caption, heading, name);
+                    insertTree(html, caption, object, parseChildren);
                 }
                 else {
-                    heading = (object.value || "[(anonymous function)]")
-                        .replace(/^\[(.*)\]$/, "$1");
-                    if (short === true) 
-                        return insert(html, heading, name);
-                
-                    caption = document.createElement("span");
-                    insert(caption, heading, name);
-                    preview = caption.appendChild(document.createElement("span"));
-                    preview.className = "preview";
-                    
-                    if (short !== 2) {
-                        insert(preview, " {");
-                        
-                        props = object.properties || [];
-                        count = 0;
-                        for (var i = 0; count < 5 && i < props.length; i++) {
-                            var propName = props[i].name;
-                            // for buffers propName is a number
-                            if (typeof propName == "string" && propName.indexOf("function") === 0)
-                                continue;
+                    if (type === "object" || object.properties.length > 0) {
+                        // An object, or a value of unknown type which has properties, so should be displayed as an object.
 
-                            insert(preview, (i !== 0 ? ", " : ""));
-                            insert(preview, "", propName);
-                            renderType(props[i], preview, 2, true);
-                            count++;
+                        heading = (object.value || "[(anonymous function)]")
+                            .replace(/^\[(.*)\]$/, "$1");
+                        if (short === true)
+                            return insert(html, heading, name);
+
+                        caption = document.createElement("span");
+                        insert(caption, heading, name);
+                        preview = caption.appendChild(document.createElement("span"));
+                        preview.className = "preview";
+
+                        if (short !== 2) {
+                            insert(preview, " {");
+
+                            props = object.properties || [];
+                            count = 0;
+                            for (var i = 0; count < 5 && i < props.length; i++) {
+                                var propName = props[i].name;
+                                // for buffers propName is a number
+                                if (typeof propName == "string" && propName.indexOf("function") === 0)
+                                    continue;
+
+                                insert(preview, (i !== 0 ? ", " : ""));
+                                insert(preview, "", propName);
+                                renderType(props[i], preview, 2, true);
+                                count++;
+                            }
+                            if (props.length > count)
+                                insert(preview, "…");
+
+                            insert(preview, "}");
                         }
-                        if (props.length > count)
-                            insert(preview, "…");
-                            
-                        insert(preview, "}");
+                        else {
+                            insert(preview, "");
+                        }
+
+                        insertTree(html, caption, object, parseChildren);
                     }
                     else {
-                        insert(preview, "");
+                        // A value of unknown type which does not have any properties - assume it is a language-specific
+                        // primitive type.
+                        insert(html, value, name);
                     }
                 }
-                
-                insertTree(html, caption, object, parseChildren);
             }
         }
         
