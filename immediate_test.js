@@ -127,21 +127,8 @@ require(["lib/architect/architect", "lib/chai/chai"],
         },
         "plugins/c9.ide.ui/menus.js",
         
-        // Mock plugins
         {
-            consumes: ["apf", "ui", "Plugin"],
-            provides: [
-                "menus", "layout", "watcher", 
-                "save", "fs", "preferences", "clipboard",
-                "auth.bootstrap", "info", "dialog.alert", "dialog.error"
-            ],
-            setup: expect.html.mocked,
-            show: function() {
-                alert(arguments);
-            }
-        },
-        {
-            consumes: ["immediate", "tabManager"],
+            consumes: ["immediate", "tabManager", "console"],
             provides: [],
             setup: main
         }
@@ -150,6 +137,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
     function main(options, imports, register) {
         var immediate = imports.immediate;
         var tabManager = imports.tabManager;
+        var c9console = imports.console;
         
         expect.html.setConstructor(function(tab) {
             if (typeof tab == "object")
@@ -177,8 +165,8 @@ require(["lib/architect/architect", "lib/chai/chai"],
                 window.bar.$ext.style.height = "150px";
       
                 document.body.style.marginBottom = "150px";
-                tabManager.containers[0].$ext.style.height="100%";
                 
+                c9console.container.$ext.style.height="100%";
                 done();
             });
             
