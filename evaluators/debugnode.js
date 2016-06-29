@@ -407,7 +407,7 @@ define(function(require, exports, module) {
                     insertTree(html, caption, object, parseChildren);
                 }
                 else {
-                    if (type === "object" || (object.properties && object.properties.length > 0)) {
+                    if (type === "object" || object.children || (object.properties && object.properties.length > 0)) {
                         // An object, or a value of unknown type which has properties, so should be displayed as an object.
 
                         heading = (object.value || "[(anonymous function)]")
