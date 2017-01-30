@@ -29,7 +29,7 @@ define(function(require, exports, module) {
         var replTypes = {}; //Shared across Immediate windows
         var theme, defaultEvaluator;
         
-        handle.on("load", function(){
+        handle.on("load", function() {
             handle.addElement(
                 tabManager.getElement("mnuEditors").appendChild(
                     new ui.item({
@@ -39,19 +39,19 @@ define(function(require, exports, module) {
                                 active: true,
                                 pane: this.parentNode.pane,
                                 editorType: "immediate"
-                            }, function(){});
+                            }, function() {});
                         }
                     })
                 )
             );
 
             menus.addItemByPath("Window/New Immediate Window", new ui.item({
-                onclick: function(){
+                onclick: function() {
                     tabManager.open({
                         active: true,
                         pane: this.parentNode.pane,
                         editorType: "immediate"
-                    }, function(){});
+                    }, function() {});
                 }
             }), 31, handle);
             
@@ -98,7 +98,7 @@ define(function(require, exports, module) {
             });
         }
         
-        function Immediate(){
+        function Immediate() {
             var Baseclass = editors.findEditor("ace");
             
             var plugin = new Baseclass(true, [], main.consumes);
@@ -111,7 +111,7 @@ define(function(require, exports, module) {
                 
                 // Create UI elements
                 statusbar = e.tab.appendChild(new ui.bar({
-                    skin: "bar-status" ,
+                    skin: "bar-status",
                     skinset: "c9statusbar",
                     zindex: 10000,
                     height: 23,
@@ -135,7 +135,7 @@ define(function(require, exports, module) {
                 
                 btnClear = ui.insertByIndex(statusbar, new ui.button({
                     margin: "0 3 0 0",
-                    skin: "btn_console" ,
+                    skin: "btn_console",
                     skinset: "c9statusbar",
                     class: "clear",
                     submenudir: "up"
@@ -153,12 +153,12 @@ define(function(require, exports, module) {
                 commands.addCommand({
                     bindKey: "Ctrl-C",
                     name: "abortimmediateexpression",
-                    isAvailable: function(){
+                    isAvailable: function() {
                         var tab = tabManager.focussedTab;
                         if (tab && tab.editorType == "immediate" && tab.editor && tab.editor.ace)
                            return tab.editor.ace.selection.isEmpty() && tab.editor.ace.isFocused();
                     },
-                    exec: function(){ abort(); }
+                    exec: function() { abort(); }
                 }, plugin);
                 
                 e.htmlNode.className += " immediate";
@@ -166,11 +166,11 @@ define(function(require, exports, module) {
                 // Allow Selection (APF)
                 e.tab.textselect = true;
                 
-                ddType.on("afterchange", function(){
+                ddType.on("afterchange", function() {
                     if (currentDocument)
                         currentDocument.getSession().changeType(ddType.selectedType);
                 });
-                btnClear.on("click", function(){
+                btnClear.on("click", function() {
                     plugin.clear();
                     btnClear.blur();
                 });
@@ -196,7 +196,7 @@ define(function(require, exports, module) {
                     var value = ddType.selectedType || items[0].getAttribute("value");
                     var selectedItem;
                     items.forEach(function(item) {
-                        var selected = item.getAttribute("value") == value ? true :  false;
+                        var selected = item.getAttribute("value") == value ? true : false;
                         if (selected) selectedItem = item;
                         item.setAttribute("selected", selected);
                     });
@@ -224,7 +224,7 @@ define(function(require, exports, module) {
                 }
                 
                 aceHandle.on("themeChange", setTheme, plugin);
-                setTheme({theme: aceHandle.theme});
+                setTheme({ theme: aceHandle.theme });
                 
                 menu.on("prop.visible", update);
                 update();
@@ -241,7 +241,7 @@ define(function(require, exports, module) {
                 if (ddType.selectedType == value)
                     ddType.setAttribute("caption", caption);
                 
-                plugin.addOther(function(){
+                plugin.addOther(function() {
                     if (item.parentNode)
                         item.parentNode.removeChild(item);
                 });
@@ -267,7 +267,7 @@ define(function(require, exports, module) {
             
             /***** Lifecycle *****/
             
-            plugin.on("load", function(){
+            plugin.on("load", function() {
             });
             
             var currentDocument;
@@ -372,18 +372,18 @@ define(function(require, exports, module) {
                         ddType.setType(e.state.type);
                 }
             });
-            plugin.on("clear", function(){
+            plugin.on("clear", function() {
                 if (currentDocument) {
                     plugin.focus();
                 }
             });
-            plugin.on("focus", function(){
+            plugin.on("focus", function() {
             });
-            plugin.on("enable", function(){
+            plugin.on("enable", function() {
             });
-            plugin.on("disable", function(){
+            plugin.on("disable", function() {
             });
-            plugin.on("unload", function(){
+            plugin.on("unload", function() {
             });
             
             /***** Register and define API *****/
@@ -403,7 +403,7 @@ define(function(require, exports, module) {
                 /**
                  * 
                  */
-                get statusbar(){ return statusbar; },
+                get statusbar() { return statusbar; },
                 
                 /**
                  * 
@@ -418,7 +418,7 @@ define(function(require, exports, module) {
                 /**
                  * @ignore This is here to overwrite default behavior
                  */
-                isClipboardAvailable: function(e) { return !e.fromKeyboard }
+                isClipboardAvailable: function(e) { return !e.fromKeyboard; }
             });
             
             plugin.load(null, "immediate");
@@ -479,8 +479,8 @@ define(function(require, exports, module) {
          * @singleton
          */
         handle.freezePublicAPI({
-            get defaultEvaluator(){ return defaultEvaluator; },
-            set defaultEvaluator(value){ defaultEvaluator = value; },
+            get defaultEvaluator() { return defaultEvaluator; },
+            set defaultEvaluator(value) { defaultEvaluator = value; },
             
             _events: [
                 /**
@@ -528,7 +528,7 @@ define(function(require, exports, module) {
                 };
                 emit("addEvaluator", replTypes[id]);
                 
-                plugin.addOther(function(){ 
+                plugin.addOther(function() { 
                     handle.removeEvaluator(id);
                 });
             },

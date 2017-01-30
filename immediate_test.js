@@ -7,8 +7,8 @@ require(["lib/architect/architect", "lib/chai/chai"],
     var expect = chai.expect;
     
     var runners = {
-        "node" : {
-            "caption" : "Node.js (current)",
+        "node": {
+            "caption": "Node.js (current)",
             "cmd": ["node", "$file"],
             "debug": ["--debug-brk=5454"],
             "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
@@ -16,8 +16,8 @@ require(["lib/architect/architect", "lib/chai/chai"],
             "info": "Your code is running at \\033[01;34m$hostname\\033[00m.\n"
                 + "\\033[01;31mImportant:\\033[00m use \\033[01;32mprocess.env.PORT\\033[00m as the port and \\033[01;32mprocess.env.IP\\033[00m as the host in your scripts!\n"
         },
-        "pythoni" : {
-            "caption" : "Python in interactive mode",
+        "pythoni": {
+            "caption": "Python in interactive mode",
             "cmd": ["python", "-i"],
             "selector": "source.python",
             "info": "Hit \\033[01;34mCtrl-D\\033[00m to exit.\n"
@@ -52,7 +52,7 @@ require(["lib/architect/architect", "lib/chai/chai"],
                         active: "true"
                     }
                 ]
-            } } }
+            }}}
         },
         "plugins/c9.core/api.js",
         {
@@ -166,11 +166,11 @@ require(["lib/architect/architect", "lib/chai/chai"],
       
                 document.body.style.marginBottom = "150px";
                 
-                c9console.container.$ext.style.height="100%";
+                c9console.container.$ext.style.height = "100%";
                 done();
             });
             
-            describe("on.evaluate", function(){
+            describe("on.evaluate", function() {
                 it("should use evaluator types from config", function(done) {
                     var tabs = tabManager.getTabs();
                     expect(tabs.length).is.equal(3);

@@ -33,7 +33,7 @@ define(function(require, module, exports) {
                 });
             }
             
-            function draw(parent){
+            function draw(parent) {
                 return emit("draw", {
                     aml: parent,
                     html: parent.$int
@@ -42,16 +42,16 @@ define(function(require, module, exports) {
             
             /***** Lifecycle *****/
         
-            plugin.on("load", function(){
+            plugin.on("load", function() {
                 immediate.addEvaluator(caption, id, plugin, plugin);
             });
-            plugin.on("enable", function(){
+            plugin.on("enable", function() {
                 
             });
-            plugin.on("disable", function(){
+            plugin.on("disable", function() {
                 
             });
-            plugin.on("unload", function(){
+            plugin.on("unload", function() {
                 immediate.removeEvaluator(id);
             });
             
@@ -181,18 +181,18 @@ define(function(require, module, exports) {
                  * ace mode is supported (e.g. "ace/mode/javascript", "ace/mode/html", etc).
                  * @property {String} mode
                  */
-                get mode(){ return mode; },
+                get mode() { return mode; },
                 /**
                  * A message displayed at the top of the REPL. Leave this empty to not
                  * show a message.
                  * @property {String} message
                  */
-                get message(){ return message; },
+                get message() { return message; },
                 /**
                  * The caption of this evaluator
                  * @property {String} caption
                  */
-                get caption(){ return caption; },
+                get caption() { return caption; },
                 
                 _events: [
                     /**
@@ -287,6 +287,6 @@ define(function(require, module, exports) {
         
         register(null, {
             Evaluator: Evaluator
-        })
+        });
     }
 });

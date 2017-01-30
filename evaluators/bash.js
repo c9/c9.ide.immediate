@@ -23,7 +23,7 @@ define(function(require, exports, module) {
         
         var bash;
         
-        function load(){
+        function load() {
         }
         
         /***** Evaluator *****/
@@ -69,7 +69,7 @@ define(function(require, exports, module) {
                     done();
                 });
                 var code = expression.replace(/\r\n/g, "\n");
-                code = 'fcn() {\n'+ code + '\n}\n'
+                code = 'fcn() {\n' + code + '\n}\n'
                     + 'sudo(){ /usr/bin/sudo -S -p "###[sudo] password for %p: " "$@" ; }\n'
                     + 'exit() { if [ "$1" == "0" ]; then echo ß; else echo "exiting with $1"; fi; command exit $1; }\n'
                     + 'fcn "$@" \n echo ß\n';
@@ -99,7 +99,7 @@ define(function(require, exports, module) {
             }
         }
         
-        function abort(){
+        function abort() {
             if (bash && !bash.exited) {
                 bash.aborted = true;
                 bash.kill();
@@ -120,7 +120,7 @@ define(function(require, exports, module) {
         function getBash(opts, callback) {
             if (bash && !bash.exited && !bash.aborted)
                 return callback(null, bash);
-            proc.spawn("bash", { args: [] }, function(err, p) {
+            proc.spawn("bash", { args: []}, function(err, p) {
                 bash = p;
                 callback(err, bash);
             });
@@ -132,7 +132,7 @@ define(function(require, exports, module) {
         
         /***** Lifecycle *****/
         
-        plugin.on("load", function(){
+        plugin.on("load", function() {
             load();
         });
         plugin.on("canEvaluate", function(e) {
@@ -141,13 +141,13 @@ define(function(require, exports, module) {
         plugin.on("evaluate", function(e) {
             return evaluate(e.expression, e.cell, e.callback);
         });
-        plugin.on("enable", function(){
+        plugin.on("enable", function() {
             
         });
-        plugin.on("disable", function(){
+        plugin.on("disable", function() {
             
         });
-        plugin.on("unload", function(){
+        plugin.on("unload", function() {
             if (bash) {
                 bash.aborted = true;
                 bash.kill();

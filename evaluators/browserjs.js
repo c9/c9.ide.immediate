@@ -39,7 +39,7 @@ define(function(require, exports, module) {
         var iframe, win;
         
         var loaded;
-        function load(){
+        function load() {
             if (loaded) return;
             loaded = true;
             
@@ -164,7 +164,7 @@ define(function(require, exports, module) {
                     }
                     target = target.parentNode;
                 }
-            })
+            });
         }
         
         function parseChildren(object, html) {
@@ -228,7 +228,7 @@ define(function(require, exports, module) {
                             event.stopPropagation()";
                         str = "<span class='stringcollapse'><span onclick='" + event 
                             + "'>(...)</span><span>" + str
-                            + "</span></span>"
+                            + "</span></span>";
                     }
                     insert(html, str, name);
                 }
@@ -367,7 +367,7 @@ define(function(require, exports, module) {
                 }
                 else {
                     heading = (object.constructor.toString().match(/^function\s+(\w+)/) 
-                        || [0,"(anonymous function)"])[1]
+                        || [0, "(anonymous function)"])[1];
                     if (short === true) 
                         return insert(html, heading, name);
                 
@@ -408,7 +408,7 @@ define(function(require, exports, module) {
         
         function canEvaluate(str) { 
             return str.trim() ? true : false; 
-        };
+        }
         
         function evaluate(expression, cell, cb) {
             // Ignore heroku command if typed
@@ -454,7 +454,7 @@ define(function(require, exports, module) {
             }
             var result = win.result;
             if (win.thrown)
-                result = { "$$error" : result, type: win.thrown };
+                result = { "$$error": result, type: win.thrown };
             return result;
         }
         
@@ -484,7 +484,7 @@ define(function(require, exports, module) {
         
         /***** Lifecycle *****/
         
-        plugin.on("load", function(){
+        plugin.on("load", function() {
             load();
         });
         plugin.on("canEvaluate", function(e) {
@@ -493,13 +493,13 @@ define(function(require, exports, module) {
         plugin.on("evaluate", function(e) {
             return evaluate(e.expression, e.cell, e.callback);
         });
-        plugin.on("enable", function(){
+        plugin.on("enable", function() {
             
         });
-        plugin.on("disable", function(){
+        plugin.on("disable", function() {
             
         });
-        plugin.on("unload", function(){
+        plugin.on("unload", function() {
             loaded = false;
         });
         

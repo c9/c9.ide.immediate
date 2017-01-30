@@ -29,7 +29,7 @@ define(function(require, exports, module) {
         var dbg, log, lastCell;
         
         var loaded;
-        function load(){
+        function load() {
             if (loaded) return;
             loaded = true;
             
@@ -148,7 +148,7 @@ define(function(require, exports, module) {
                     container = treeitem.appendChild(document.createElement("div"));
                     container.className = "treecontainer";
                     container.style.display = "none";
-                    drawChildren(object, container, function(){
+                    drawChildren(object, container, function() {
                         findWidgetAndUpdate(target);
                     });
                 }
@@ -159,8 +159,8 @@ define(function(require, exports, module) {
                 
                 // hack!
                 var target = e.currentTarget;
-                findWidgetAndUpdate(target)
-            })
+                findWidgetAndUpdate(target);
+            });
         }
         
         function findWidgetAndUpdate(target) {
@@ -209,7 +209,7 @@ define(function(require, exports, module) {
             if (!object.properties && dbg) {
                 dbg.getProperties(object, function(err, properties) {
                     // if (properties && properties.length)
-                    parseChildren(object, html, callback)
+                    parseChildren(object, html, callback);
                 });
                 return;
             }
@@ -226,8 +226,8 @@ define(function(require, exports, module) {
             var result = [];
             (object.properties || []).forEach(function(o) {
                 if (typeof o.name != "number")
-                    result.push(o)
-            })
+                    result.push(o);
+            });
         }
         
         function renderType(object, html, log, short, name) {
@@ -256,7 +256,7 @@ define(function(require, exports, module) {
                             event.stopPropagation()";
                         str = "<span class='stringcollapse'><span onclick='" + event 
                             + "'>(...)</span><span>" + str
-                            + "</span></span>"
+                            + "</span></span>";
                     }
                     insert(html, str, name);
                 }
@@ -458,7 +458,7 @@ define(function(require, exports, module) {
         
         function canEvaluate(str) { 
             return str.trim() ? true : false; 
-        };
+        }
         
         function evaluate(expression, cell, cb) {
             lastCell = cell;
@@ -485,13 +485,13 @@ define(function(require, exports, module) {
                     dbg && !dbg.features.executeCode
                         ? "Code execution is not supported by this debugger"
                         : "Debug Session is not running");
-                return callback({ "$$error" : err, type: err });
+                return callback({ "$$error": err, type: err });
             }
             
             dbg.evaluate(expression, callstack.activeFrame, 
               !callstack.activeFrame, false, function(err, variable) {
                 if (err)
-                    return callback({ "$$error" : err, type: err });
+                    return callback({ "$$error": err, type: err });
                 
                 if (variable.type == "function") {
                     dbg.serializeVariable(variable, function(value) {
@@ -570,7 +570,7 @@ define(function(require, exports, module) {
                             });
                             
                             check(variable.prototype);
-                        })
+                        });
                     }
                     else {
                         callback(null, results);
@@ -582,7 +582,7 @@ define(function(require, exports, module) {
         
         /***** Lifecycle *****/
         
-        plugin.on("load", function(){
+        plugin.on("load", function() {
             load();
         });
         plugin.on("canEvaluate", function(e) {
@@ -591,13 +591,13 @@ define(function(require, exports, module) {
         plugin.on("evaluate", function(e) {
             return evaluate(e.expression, e.cell, e.callback);
         });
-        plugin.on("enable", function(){
+        plugin.on("enable", function() {
             
         });
-        plugin.on("disable", function(){
+        plugin.on("disable", function() {
             
         });
-        plugin.on("unload", function(){
+        plugin.on("unload", function() {
             loaded = false;
         });
         
